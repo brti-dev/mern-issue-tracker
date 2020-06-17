@@ -1,21 +1,26 @@
 "use strict";
 
-var continents = ['Africa', 'America', 'Asia', 'Australia', 'Europe'];
-
-function HelloWorld() {
-  return continents.map(function (continent) {
-    return /*#__PURE__*/React.createElement(Continent, null, continent);
-  });
-  return {
-    helloContintents: helloContintents
-  };
+function IssueFilter() {
+  return /*#__PURE__*/React.createElement("div", null, "foo");
 }
 
-function Continent(props) {
-  return /*#__PURE__*/React.createElement("a", {
-    href: "/hello/{props.children}"
-  }, "Hello ", props.children, "!");
+function IssueTable() {
+  return /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "ID"), /*#__PURE__*/React.createElement("th", null, "Title"))), /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement(IssueRow, {
+    issue_id: 1,
+    issue_title: "Error foo"
+  }), /*#__PURE__*/React.createElement(IssueRow, {
+    issue_id: 2,
+    issue_title: "Error bar"
+  })));
 }
 
-var element = /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", null, "Hello World!"), /*#__PURE__*/React.createElement(HelloWorld, null));
+function IssueAdd() {
+  return /*#__PURE__*/React.createElement("div", null, "foo");
+}
+
+function IssueList() {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", null, "Issue Tracker"), /*#__PURE__*/React.createElement(IssueFilter, null), /*#__PURE__*/React.createElement(IssueTable, null), /*#__PURE__*/React.createElement(IssueAdd, null));
+}
+
+var element = /*#__PURE__*/React.createElement(IssueList, null);
 ReactDOM.render(element, document.getElementById('root'));

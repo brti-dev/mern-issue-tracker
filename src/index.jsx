@@ -1,19 +1,41 @@
-let continents = ['Africa','America','Asia','Australia','Europe'];
-
-function HelloWorld() {
-    return continents.map(continent => <Continent>{continent}</Continent>);
-    return {helloContintents}
+function IssueFilter() {
+    return <div>foo</div>
 }
 
-function Continent(props) {
-    return <a href="/hello/{props.children}">Hello {props.children}!</a>
+function IssueTable() {
+    return (
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <IssueRow issue_id={1} issue_title="Error foo" />
+                <IssueRow issue_id={2} issue_title="Error bar" />
+            </tbody>
+        </table>
+    )
+}
+
+function IssueAdd() {
+    return <div>foo</div>
+}
+
+function IssueList() {
+    return (
+        <>
+            <h1>Issue Tracker</h1>
+            <IssueFilter />
+            <IssueTable />
+            <IssueAdd />
+        </>
+    )
 }
 
 const element = (
-    <>
-        <h1>Hello World!</h1>
-        <HelloWorld />
-    </>
+    <IssueList />
 )
 
 ReactDOM.render(element, document.getElementById('root'))
