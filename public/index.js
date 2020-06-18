@@ -41,13 +41,33 @@ var sampleIssue = _objectSpread(_objectSpread({}, initialIssues[0]), {}, {
   owner: 'Pieta'
 });
 
+var dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
+
+function jsonDateReviver(key, value) {
+  if (dateRegex.test(value)) {
+    return new Date(value);
+  }
+
+  return value;
+}
+
 function loadData() {
+  var query = 'query { issueList { id title status, owner, created, effort, due } }';
   return new Promise(function (resolve, reject) {
-    return setTimeout(function () {
-      return resolve({
-        data: initialIssues
-      });
-    }, 1000);
+    fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: query
+      })
+    }).then(function (response) {
+      return response.text();
+    }).then(function (data) {
+      var json = JSON.parse(data, jsonDateReviver);
+      return resolve(json);
+    });
   });
 }
 
@@ -63,15 +83,18 @@ function IssueTable() {
 
   React.useEffect(function () {
     loadData().then(function (result) {
-      setIssues(result.data);
+      console.log('loadData result:', result);
+      setIssues(result.data.issueList);
     });
   }, []);
 
   var createIssue = function createIssue(issue) {
+    console.log('createIssue', issue);
     issue.id = issues.length + 1;
     issue.created = new Date();
     var newIssueList = issues.slice();
     newIssueList.push(issue);
+    console.log('newIssueList', newIssueList);
     setIssues(newIssueList);
   };
 

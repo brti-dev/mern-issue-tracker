@@ -21,13 +21,30 @@ const initialIssues = [
 
 const sampleIssue = {...initialIssues[0], status: 'New', owner: 'Pieta'}
 
+const dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
+
+function jsonDateReviver(key, value) {
+    if (dateRegex.test(value)) {
+        return new Date(value);
+    }
+
+    return value;
+}
+
 function loadData() {
-    return new Promise((resolve, reject) =>
-        setTimeout(
-            () => resolve({ data: initialIssues }),
-            1000
-        )
-    )
+    const query = 'query { issueList { id title status, owner, created, effort, due } }'
+    
+    return new Promise((resolve, reject) => {
+        fetch('/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({ query })
+        }).then(response => response.text())
+        .then(data => {
+            const json = JSON.parse(data, jsonDateReviver);
+            return resolve(json)
+        })
+    })
 }
 
 function IssueFilter() {
@@ -39,15 +56,18 @@ function IssueTable() {
 
     React.useEffect(() => {
         loadData().then(result => {
-            setIssues(result.data)
+            console.log('loadData result:', result)
+            setIssues(result.data.issueList)
         })
     }, [])
 
     const createIssue = (issue) => {
+        console.log('createIssue', issue)
         issue.id = issues.length + 1;
         issue.created = new Date();
         const newIssueList = issues.slice();
         newIssueList.push(issue);
+        console.log('newIssueList', newIssueList)
         setIssues(newIssueList);
     }
 
