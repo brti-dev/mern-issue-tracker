@@ -12,35 +12,6 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var initialIssues = [{
-  id: 1,
-  status: 'New',
-  owner: 'Ravan',
-  effort: 5,
-  created: new Date('2019-01-15'),
-  due: undefined,
-  title: 'Error in console when clicking "Add"'
-}, {
-  id: 2,
-  status: 'Assigned',
-  owner: 'Eddie',
-  effort: 14,
-  created: new Date('2019-01-16'),
-  due: new Date('2019-02-16'),
-  title: 'Missing bottom border panel'
-}];
-
-var sampleIssue = _objectSpread(_objectSpread({}, initialIssues[0]), {}, {
-  status: 'New',
-  owner: 'Pieta'
-});
-
 var dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
 
 function jsonDateReviver(key, value) {
@@ -87,23 +58,34 @@ function IssueTable() {
       setIssues(result.data.issueList);
     });
   }, []);
-
-  var createIssue = function createIssue(issue) {
-    console.log('createIssue', issue);
-    issue.id = issues.length + 1;
-    issue.created = new Date();
-    var newIssueList = issues.slice();
-    newIssueList.push(issue);
-    console.log('newIssueList', newIssueList);
-    setIssues(newIssueList);
-  };
-
   var issueRows = issues.map(function (issue) {
     return /*#__PURE__*/React.createElement(IssueRow, {
       key: issue.id,
       issue: issue
     });
   });
+
+  var createIssue = function createIssue(issue) {
+    console.log('createIssue', issue);
+    var query = "mutation {\n            issueAdd(issue:{\n                title: \"".concat(issue.title, "\",\n                owner: \"").concat(issue.owner, "\",\n                due: \"").concat(issue.due.toISOString(), "\",\n            }) {\n                id\n            }\n        }");
+    fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: query
+      })
+    }).then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      console.log('mutation issueAdd response', data);
+      loadData().then(function (result) {
+        return setIssues(result.data.issueList);
+      });
+    });
+  };
+
   var formRef = React.useRef();
 
   var handleSubmit = function handleSubmit(e) {
@@ -112,7 +94,7 @@ function IssueTable() {
     var issue = {
       owner: form.owner.value,
       title: form.title.value,
-      status: 'New'
+      due: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 10)
     };
     createIssue(issue);
   };
@@ -137,7 +119,7 @@ function IssueTable() {
 
 function IssueRow(_ref) {
   var issue = _ref.issue;
-  return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, issue.id), /*#__PURE__*/React.createElement("td", null, issue.status), /*#__PURE__*/React.createElement("td", null, issue.owner), /*#__PURE__*/React.createElement("td", null, issue.created.toDateString()), /*#__PURE__*/React.createElement("td", null, issue.effort), /*#__PURE__*/React.createElement("td", null, issue.due && issue.due.toDateString()), /*#__PURE__*/React.createElement("td", null, issue.title));
+  return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, issue.id), /*#__PURE__*/React.createElement("td", null, issue.status), /*#__PURE__*/React.createElement("td", null, issue.owner), /*#__PURE__*/React.createElement("td", null, issue.created), /*#__PURE__*/React.createElement("td", null, issue.effort), /*#__PURE__*/React.createElement("td", null, issue.due && issue.due), /*#__PURE__*/React.createElement("td", null, issue.title));
 }
 
 function IssueList() {

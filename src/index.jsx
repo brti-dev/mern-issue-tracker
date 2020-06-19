@@ -1,26 +1,3 @@
-const initialIssues = [
-    {
-        id: 1,
-        status: 'New',
-        owner: 'Ravan',
-        effort: 5,
-        created: new Date('2019-01-15'),
-        due: undefined,
-        title: 'Error in console when clicking "Add"',
-    },
-    {
-        id: 2,
-        status: 'Assigned',
-        owner: 'Eddie',
-        effort: 14,
-        created: new Date('2019-01-16'),
-        due: new Date('2019-02-16'),
-        title: 'Missing bottom border panel',
-    }
-]
-
-const sampleIssue = {...initialIssues[0], status: 'New', owner: 'Pieta'}
-
 const dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
 
 function jsonDateReviver(key, value) {
@@ -61,19 +38,33 @@ function IssueTable() {
         })
     }, [])
 
-    const createIssue = (issue) => {
-        console.log('createIssue', issue)
-        issue.id = issues.length + 1;
-        issue.created = new Date();
-        const newIssueList = issues.slice();
-        newIssueList.push(issue);
-        console.log('newIssueList', newIssueList)
-        setIssues(newIssueList);
-    }
-
     const issueRows = issues.map(issue => 
         <IssueRow key={issue.id} issue={issue} />
     )
+
+    const createIssue = (issue) => {
+        console.log('createIssue', issue);
+        
+        const query = `mutation {
+            issueAdd(issue:{
+                title: "${issue.title}",
+                owner: "${issue.owner}",
+                due: "${issue.due.toISOString()}",
+            }) {
+                id
+            }
+        }`
+    
+        fetch('/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({ query })
+        }).then(response =>response.json())
+        .then(data => {
+            console.log('mutation issueAdd response', data)
+            loadData().then(result => setIssues(result.data.issueList));
+        })
+    }
 
     const formRef = React.useRef()
 
@@ -83,7 +74,7 @@ function IssueTable() {
         const issue = {
             owner: form.owner.value,
             title: form.title.value,
-            status: 'New',
+            due: new Date(new Date().getTime() + 1000*60*60*24*10),
         }
         createIssue(issue)
     }
@@ -121,9 +112,9 @@ function IssueRow({issue}) {
             <td>{issue.id}</td>
             <td>{issue.status}</td>
             <td>{issue.owner}</td>
-            <td>{issue.created.toDateString()}</td>
+            <td>{issue.created}</td>
             <td>{issue.effort}</td>
-            <td>{issue.due && issue.due.toDateString()}</td>
+            <td>{issue.due && issue.due}</td>
             <td>{issue.title}</td>
         </tr>
     );
