@@ -1,4 +1,4 @@
-scalar GraphQLDate
+scalar Date
 
 type Issue {
     id: Int!
@@ -6,8 +6,17 @@ type Issue {
     status: String!
     owner: String
     effort: Int
-    created: GraphQLDate!
-    due: GraphQLDate
+    created: Date!
+    due: Date
+}
+
+input IssueInputs {
+    title: String!
+    "Optional, defaults to 'New'"
+    status: String
+    owner: String
+    effort: Int
+    due: Date
 }
 
 # Top level declarations
@@ -19,4 +28,5 @@ type Query {
 
 type Mutation {
     setAboutMessage(message: String!): String
+    issueAdd(issue: IssueInputs!): Issue!
 }

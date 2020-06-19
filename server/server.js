@@ -1,13 +1,14 @@
 const fs = require('fs');
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-const { GraphQLScalarType } = require('graphql')
+const { GraphQLScalarType } = require('graphql');
+const { Kind } = require('graphql/language');
 
 // API GraphQL schema
 
 let aboutMessage = 'Issue Tracker API v1.0';
 
-const issuesDB = [
+let issuesDB = [
     {
         id: 1,
         status: 'New',
@@ -28,14 +29,6 @@ const issuesDB = [
     }
 ]
 
-const GraphQLDate = new GraphQLScalarType({
-    name: 'GraphQLDate',
-    description: 'A Date() type in GraphQL as a scalar',
-    serialize(value) {
-        return value.toISOString();
-    }
-})
-
 const resolvers = {
     Query: {
         about: () => aboutMessage,
@@ -43,8 +36,27 @@ const resolvers = {
     },
     Mutation: {
         setAboutMessage,
+        issueAdd,
     },
-    GraphQLDate,
+    Date: new GraphQLScalarType({
+        name: 'Date',
+        description: 'A Date() type in GraphQL as a scalar',
+        parseValue(value) { // Value from the client
+            return new Date(value);
+        },
+        serialize(value) {
+            return value.getTime(); // Value sent to the client
+        },
+        parseLiteral(ast) {
+            if (ast.kind == Kind.STRING) {
+                return new Date(ast.value);
+            }
+            if (ast.kind === Kind.INT) {
+                return new Date(+ast.value) // ast value is always in string format
+            }
+            return undefined;
+        }
+    }),
 }
 
 /**
@@ -56,6 +68,17 @@ const resolvers = {
  */
 function setAboutMessage(obj, args, context, info) {
     return aboutMessage = args.message;
+}
+
+function issueAdd(_, { issue }) {
+    issue.created = new Date();
+    issue.id = issuesDB.length + 1;
+    if (issue.status == undefined) {
+        issue.status = 'New';
+    }
+    issuesDB.push(issue);
+    console.log('Issue Add', issue);
+    return issue;
 }
 
 function issueList() {
