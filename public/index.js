@@ -12,6 +12,86 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+// Common utility function
+// Handles all API calls and reports errors
+function graphQLFetch(_x) {
+  return _graphQLFetch.apply(this, arguments);
+}
+
+function _graphQLFetch() {
+  _graphQLFetch = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(query) {
+    var variables,
+        response,
+        body,
+        result,
+        error,
+        details,
+        _args = arguments;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            variables = _args.length > 1 && _args[1] !== undefined ? _args[1] : {};
+            _context.prev = 1;
+            _context.next = 4;
+            return fetch('/graphql', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                query: query,
+                variables: variables
+              })
+            });
+
+          case 4:
+            response = _context.sent;
+            _context.next = 7;
+            return response.text();
+
+          case 7:
+            body = _context.sent;
+            result = JSON.parse(body, jsonDateReviver);
+
+            if (result.errors) {
+              error = result.error[0];
+
+              if (error.extensions.code == 'BAD_USER_INPUT') {
+                details = error.extensions.exception.errors.join('\n ');
+                alert("".concat(error.message, ":\n ").concat(details));
+              } else {
+                alert("".concat(error.extensions.code, ": ").concat(error.message));
+              }
+            }
+
+            return _context.abrupt("return", result.data);
+
+          case 13:
+            _context.prev = 13;
+            _context.t0 = _context["catch"](1);
+            alert("Error ".concat(_context.t0.message));
+
+          case 16:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[1, 13]]);
+  }));
+  return _graphQLFetch.apply(this, arguments);
+}
+
 var dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
 
 function jsonDateReviver(key, value) {
@@ -22,73 +102,99 @@ function jsonDateReviver(key, value) {
   return value;
 }
 
-function loadData() {
-  var query = 'query { issueList { id title status, owner, created, effort, due } }';
-  return new Promise(function (resolve, reject) {
-    fetch('/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        query: query
-      })
-    }).then(function (response) {
-      return response.text();
-    }).then(function (data) {
-      var json = JSON.parse(data, jsonDateReviver);
-      return resolve(json);
-    });
-  });
-}
-
 function IssueFilter() {
   return /*#__PURE__*/React.createElement("div", null, "foo");
 }
 
-function IssueTable() {
-  var _React$useState = React.useState([]),
-      _React$useState2 = _slicedToArray(_React$useState, 2),
-      issues = _React$useState2[0],
-      setIssues = _React$useState2[1];
+function fetchIssues() {
+  return _fetchIssues.apply(this, arguments);
+}
 
+function _fetchIssues() {
+  _fetchIssues = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var query, data;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            query = 'query { issueList { id title status, owner, created, effort, due } }';
+            _context2.next = 3;
+            return graphQLFetch(query);
+
+          case 3:
+            data = _context2.sent;
+
+            if (data) {
+              console.log('fetchIssues result:', data);
+              dispatchIssues({
+                action: 'FETCH_SUCCESS',
+                payload: data.issueList
+              });
+            }
+
+          case 5:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _fetchIssues.apply(this, arguments);
+}
+
+function issuesReducer(state, action) {
+  switch (action.type) {
+    case 'FETCH_SUCCESS':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        data: action.payload
+      });
+
+    case 'CREATE':
+      console.log('Create issue', action.issue);
+      var query = "mutation issueAdd($issue: IssueInputs!) {\n                issueAdd(issue: $issue) {\n                    id\n                }\n            }";
+      fetch('/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          query: query,
+          variables: {
+            issue: issue
+          }
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        console.log('mutation issueAdd response', data);
+        loadData().then(function (result) {
+          return setIssues(result.data.issueList);
+        });
+      });
+
+    default:
+      throw new Error();
+  }
+}
+
+function IssueTable() {
+  var _React$useReducer = React.useReducer(issuesReducer, {
+    data: []
+  }),
+      _React$useReducer2 = _slicedToArray(_React$useReducer, 2),
+      issues = _React$useReducer2[0],
+      dispatchIssues = _React$useReducer2[1];
+
+  console.log('State: issues', issues);
   React.useEffect(function () {
-    loadData().then(function (result) {
-      console.log('loadData result:', result);
-      setIssues(result.data.issueList);
-    });
+    fetchIssues();
   }, []);
-  var issueRows = issues.map(function (issue) {
+  var issueRows = issues.data.map(function (issue) {
     return /*#__PURE__*/React.createElement(IssueRow, {
       key: issue.id,
       issue: issue
     });
   });
-
-  var createIssue = function createIssue(issue) {
-    console.log('createIssue', issue);
-    var query = "mutation issueAdd($issue: IssueInputs!) {\n            issueAdd(issue: $issue) {\n                id\n            }\n        }";
-    fetch('/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        query: query,
-        variables: {
-          issue: issue
-        }
-      })
-    }).then(function (response) {
-      return response.json();
-    }).then(function (data) {
-      console.log('mutation issueAdd response', data);
-      loadData().then(function (result) {
-        return setIssues(result.data.issueList);
-      });
-    });
-  };
-
   var formRef = React.useRef();
 
   var handleSubmit = function handleSubmit(e) {
@@ -99,7 +205,10 @@ function IssueTable() {
       title: form.title.value,
       due: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 10)
     };
-    createIssue(issue);
+    dispatchIssues({
+      type: 'create',
+      issue: issue
+    });
   };
 
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("table", {
