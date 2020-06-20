@@ -32,7 +32,7 @@ let issuesDB = [
 const resolvers = {
     Query: {
         about: () => aboutMessage,
-        issueList
+        issueList,
     },
     Mutation: {
         setAboutMessage,

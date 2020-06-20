@@ -45,12 +45,8 @@ function IssueTable() {
     const createIssue = (issue) => {
         console.log('createIssue', issue);
         
-        const query = `mutation {
-            issueAdd(issue:{
-                title: "${issue.title}",
-                owner: "${issue.owner}",
-                due: "${issue.due.toISOString()}",
-            }) {
+        const query = `mutation issueAdd($issue: IssueInputs!) {
+            issueAdd(issue: $issue) {
                 id
             }
         }`
@@ -58,7 +54,7 @@ function IssueTable() {
         fetch('/graphql', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({ query })
+            body: JSON.stringify({ query, variables: { issue } })
         }).then(response =>response.json())
         .then(data => {
             console.log('mutation issueAdd response', data)

@@ -67,14 +67,17 @@ function IssueTable() {
 
   var createIssue = function createIssue(issue) {
     console.log('createIssue', issue);
-    var query = "mutation {\n            issueAdd(issue:{\n                title: \"".concat(issue.title, "\",\n                owner: \"").concat(issue.owner, "\",\n                due: \"").concat(issue.due.toISOString(), "\",\n            }) {\n                id\n            }\n        }");
+    var query = "mutation issueAdd($issue: IssueInputs!) {\n            issueAdd(issue: $issue) {\n                id\n            }\n        }";
     fetch('/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        query: query
+        query: query,
+        variables: {
+          issue: issue
+        }
       })
     }).then(function (response) {
       return response.json();
