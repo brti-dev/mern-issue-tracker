@@ -1,6 +1,6 @@
 const fs = require('fs');
 const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, UserInputError } = require('apollo-server-express');
 const { GraphQLScalarType } = require('graphql');
 const { Kind } = require('graphql/language');
 
@@ -42,14 +42,16 @@ const resolvers = {
         name: 'Date',
         description: 'A Date() type in GraphQL as a scalar',
         parseValue(value) { // Value from the client
-            return new Date(value);
+            const dateValue = new Date(value);
+            return isNaN(dateValue) ? undefined : dateValue;
         },
         serialize(value) {
             return value.getTime(); // Value sent to the client
         },
         parseLiteral(ast) {
             if (ast.kind == Kind.STRING) {
-                return new Date(ast.value);
+                const value = new Date(ast.value);
+                return isNaN(value) ? undefined : value;
             }
             if (ast.kind === Kind.INT) {
                 return new Date(+ast.value) // ast value is always in string format
@@ -70,12 +72,26 @@ function setAboutMessage(obj, args, context, info) {
     return aboutMessage = args.message;
 }
 
+function validateIssue(issue) {
+    const errors = [];
+    
+    if (issue.title.length < 3) {
+        errors.push('Field "title" must be at least 3 characters long');    
+    }
+
+    if (issue.status == 'Assigned' && !issue.owner) {
+        errors.push('Field "owner" is required when status is assigned');
+    }
+
+    if (errors.length > 0) {
+        throw new UserInputError('Invalid input', { errors });
+    }
+}
+
 function issueAdd(_, { issue }) {
+    validateIssue(issue);
     issue.created = new Date();
     issue.id = issuesDB.length + 1;
-    if (issue.status == undefined) {
-        issue.status = 'New';
-    }
     issuesDB.push(issue);
     console.log('Issue Add', issue);
     return issue;
@@ -88,6 +104,10 @@ function issueList() {
 const server = new ApolloServer({
     typeDefs: fs.readFileSync('./server/schema.graphql', 'utf-8'),
     resolvers,
+    formatError: error => {
+        console.log(error);
+        return error;
+    },
 });
 
 const app = express()
