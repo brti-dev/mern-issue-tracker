@@ -7,7 +7,8 @@
     "start": "nodemon -w server -e js,graphql ./server/server.js",
     "compile": "babel src --out-dir public",
     "watch": "babel src --out-dir public --watch --verbose",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init-issues-db": "mongo mongodb+srv://root:root91@cluster0.dsrzl.mongodb.net/issuetracker scripts/init.mongo.js"
   },
   "author": "",
   "license": "ISC",
