@@ -12,7 +12,7 @@ async function testWithAsync() {
         const db = client.db()
         const collection = db.collection('employees')
 
-        const employee = { id: 3, name: 'A. Callback', age:23 }
+        const employee = { id: Math.ceil(Math.random() * 100000), name: 'A. Callback', age:23 }
         const result = await collection.insertOne(employee)
         console.log('Result of insert:\n', result.insertedId)
 
@@ -21,6 +21,7 @@ async function testWithAsync() {
     } catch(error) {
         console.error(error)
     } finally {
+        console.log('closing connection')
         client.close()
     }
 }
