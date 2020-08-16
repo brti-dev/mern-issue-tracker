@@ -3,6 +3,22 @@ const express = require('express');
 const { ApolloServer, UserInputError } = require('apollo-server-express');
 const { GraphQLScalarType } = require('graphql');
 const { Kind } = require('graphql/language');
+const { MongoClient } = require('mongodb')
+
+const url = 'mongodb://localhost/issuetracker'
+// Global db connection variable
+let db
+async function connectToDb() {
+    const client = new MongoClient(
+        url, 
+        { useNewUrlParser: true, useUnifiedTopology: true }
+    )
+    await client.connect()
+    console.log('Connected to MongoDB via ', url)
+    db = client.db()
+    const test_db_schema = await db.collection('issues').find({}).toArray()
+    console.log(test_db_schema)
+}
 
 // API GraphQL schema
 
@@ -97,8 +113,9 @@ function issueAdd(_, { issue }) {
     return issue;
 }
 
-function issueList() {
-    return issuesDB;
+async function issueList() {
+    const issues = await db.collection('issues').find({}).toArray()
+    return issues
 }
 
 const server = new ApolloServer({
@@ -133,10 +150,17 @@ app.all('/forbidden', (req, res) => {
 server.applyMiddleware({ app, path: '/graphql' });
 
 // Start the server and wait for requests
-/**
- * @param port Listen on this port
- * @param callback Call when server has successfully started
- */
-app.listen(3000, function() {
-    console.log('App started on port 3000')
-})
+(async function() {
+    try {
+        await connectToDb()
+        /**
+         * @param port Listen on this port
+         * @param callback Call when server has successfully started
+         */
+        app.listen(3000, function() {
+            console.log('App started on port 3000')
+        })
+    } catch (err) {
+        console.error('Error:', err)
+    }
+})()
