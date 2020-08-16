@@ -1,0 +1,24 @@
+{
+    "name": "pro-mern-stack-2-api",
+    "version": "1.0.0",
+    "description": "Pro MERN Stack (2nd Edition) API",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon -e js,graphql server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vasansr/pro-mern-stack-2.git"
+    },
+    "author": "vasan.promern@gmail.com",
+    "license": "ISC",
+    "homepage": "https://github.com/vasansr/pro-mern-stack-2",
+    "dependencies": {
+        "apollo-server-express": "^2.3.1",
+        "express": "^4.17.1",
+        "graphql": "^15.3.0",
+        "mongodb": "^3.6.0",
+        "nodemon": "^1.18.9"
+    }
+}

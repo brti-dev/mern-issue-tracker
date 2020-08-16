@@ -122,7 +122,7 @@ async function issueList() {
 }
 
 const server = new ApolloServer({
-    typeDefs: fs.readFileSync('./server/schema.graphql', 'utf-8'),
+    typeDefs: fs.readFileSync('./schema.graphql', 'utf-8'),
     resolvers,
     formatError: error => {
         console.log(error);
@@ -132,23 +132,23 @@ const server = new ApolloServer({
 
 const app = express()
 
-// Middleware function
-const fileServerMiddleware = express.static('public')
+// // Middleware function
+// const fileServerMiddleware = express.static('public')
 
-// Mount static middleware for use in the app
-/**
- * @param url Base URL of any HTTP request to match
- * @param middlewareFunction
- */
-app.use('/', fileServerMiddleware)
+// // Mount static middleware for use in the app
+// /**
+//  * @param url Base URL of any HTTP request to match
+//  * @param middlewareFunction
+//  */
+// app.use('/', fileServerMiddleware)
 
-app.get('/hello/:place', (req, res) => {
-    res.send(`Hello ${req.params.place}`)
-})
+// app.get('/hello/:place', (req, res) => {
+//     res.send(`Hello ${req.params.place}`)
+// })
 
-app.all('/forbidden', (req, res) => {
-    res.status(403).send('Access Denied')
-})
+// app.all('/forbidden', (req, res) => {
+//     res.status(403).send('Access Denied')
+// })
 
 server.applyMiddleware({ app, path: '/graphql' });
 
@@ -161,7 +161,7 @@ server.applyMiddleware({ app, path: '/graphql' });
          * @param callback Call when server has successfully started
          */
         app.listen(3000, function() {
-            console.log('App started on port 3000')
+            console.log('API server started on port 3000')
         })
     } catch (err) {
         console.error('Error:', err)
