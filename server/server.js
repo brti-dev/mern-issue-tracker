@@ -20,30 +20,26 @@ async function connectToDb() {
     console.log(test_db_schema)
 }
 
+/**
+ * Increment counter and get update count
+ * 
+ * @param {string} name Name of collection
+ * 
+ * @returns {number} Updated count
+ */
+async function getNextSequence(name) {
+    // Increment counter and return updated document
+    const result = await db.collection('counters').findOneAndUpdate(
+        { _id: name },
+        { $inc: { current: 1 } },
+        { returnNewDocument: true },
+    )
+    return result.value.current
+}
+
 // API GraphQL schema
 
 let aboutMessage = 'Issue Tracker API v1.0';
-
-let issuesDB = [
-    {
-        id: 1,
-        status: 'New',
-        owner: 'Ravan',
-        effort: 5,
-        created: new Date('2019-01-15'),
-        due: undefined,
-        title: 'Error in console when clicking "Add"',
-    },
-    {
-        id: 2,
-        status: 'Assigned',
-        owner: 'Eddie',
-        effort: 14,
-        created: new Date('2019-01-16'),
-        due: new Date('2019-02-16'),
-        title: 'Missing bottom border panel',
-    }
-]
 
 const resolvers = {
     Query: {
@@ -104,13 +100,20 @@ function validateIssue(issue) {
     }
 }
 
-function issueAdd(_, { issue }) {
+async function issueAdd(_, { issue }) {
+    const errors = []
+
     validateIssue(issue);
+    
     issue.created = new Date();
-    issue.id = issuesDB.length + 1;
-    issuesDB.push(issue);
-    console.log('Issue Add', issue);
-    return issue;
+    issue.id = await getNextSequence('issues')
+
+    const result = await db.collection('issues').insertOne(issue)
+    const savedIssue = await db.collection('issues').findOne({ _id: result.insertedId })
+
+    console.log('Issue add; result:', issue, savedIssue);
+    
+    return savedIssue;
 }
 
 async function issueList() {
