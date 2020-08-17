@@ -13,9 +13,10 @@
  * @see FUKUDA, Kazufumi, "Using Wikidata as Work Authority for Video Games" https://dcpapers.dublincore.org/pubs/article/view/4245
  */
 
+require('dotenv').config()
 const { MongoClient } = require('mongodb')
 const fetch = require('node-fetch');
-const url = 'mongodb+srv://root:root91@cluster0.dsrzl.mongodb.net/vgcollection?retryWrites=true&w=majority'
+const url = process.env.DB_URL
 
 const api_endpoint = 'http://vgsite/api'
 const credentials = {

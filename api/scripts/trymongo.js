@@ -1,7 +1,7 @@
 require('dotenv').config()
 const { MongoClient } = require('mongodb')
 
-const url = process.env.DB_URL || 'mongodb+srv://root:root91@cluster0.dsrzl.mongodb.net/issuetracker?retryWrites=true&w=majority'
+const url = process.env.DB_URL
 
 async function testWithAsync() {
     console.log('\n--- test ---')

@@ -3,7 +3,7 @@ var request = require("request")
 /*
 * Run using the mongo shell. For remote databases, ensure that the
 * connection string is supplied in the command line:
-* $ mongo mongodb+srv://root:root91@cluster0.dsrzl.mongodb.net/vgcollection scripts/initmongo_vgcollection.js
+* $ mongo <db_url> scripts/initmongo_vgcollection.js
 */
 
 const api_endpoint = 'http://vgsite/api/'
