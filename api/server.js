@@ -1,11 +1,14 @@
 const fs = require('fs');
+require('dotenv').config()
 const express = require('express');
 const { ApolloServer, UserInputError } = require('apollo-server-express');
 const { GraphQLScalarType } = require('graphql');
 const { Kind } = require('graphql/language');
 const { MongoClient } = require('mongodb')
 
-const url = 'mongodb://localhost/issuetracker'
+const port = process.env.API_SERVER_PORT || 3000
+const url = process.env.DB_URL || 'mongodb://localhost/issuetracker'
+
 // Global db connection variable
 let db
 async function connectToDb() {
@@ -160,8 +163,8 @@ server.applyMiddleware({ app, path: '/graphql' });
          * @param port Listen on this port
          * @param callback Call when server has successfully started
          */
-        app.listen(3000, function() {
-            console.log('API server started on port 3000')
+        app.listen(port, function() {
+            console.log('API server started on port', port)
         })
     } catch (err) {
         console.error('Error:', err)
