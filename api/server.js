@@ -135,25 +135,14 @@ const server = new ApolloServer({
 
 const app = express()
 
-// // Middleware function
-// const fileServerMiddleware = express.static('public')
+const enableCors = (process.env.ENABLE_CORS || 'true') == 'true'
+console.log('CORS setting:', enableCors)
 
-// // Mount static middleware for use in the app
-// /**
-//  * @param url Base URL of any HTTP request to match
-//  * @param middlewareFunction
-//  */
-// app.use('/', fileServerMiddleware)
-
-// app.get('/hello/:place', (req, res) => {
-//     res.send(`Hello ${req.params.place}`)
-// })
-
-// app.all('/forbidden', (req, res) => {
-//     res.status(403).send('Access Denied')
-// })
-
-server.applyMiddleware({ app, path: '/graphql' });
+server.applyMiddleware({ 
+    app, 
+    path: '/graphql',
+    cors: enableCors,
+ });
 
 // Start the server and wait for requests
 (async function() {

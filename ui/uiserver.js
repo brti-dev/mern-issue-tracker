@@ -1,10 +1,17 @@
 require('dotenv').config()
 const express = require('express')
+const { createProxyMiddleware } = require('http-proxy-middleware') // Not implemented
 const app = express()
 
 app.use(express.static('public'))
 
-const UI_API_ENDPOINT = process.env.UI_API_ENDPOINT || 'http://localhost:3000/graphql'
+// Proxy Not implemented -- for reference only
+const apiProxyTarget = process.env.API_PROXY_TARGET
+if (apiProxyTarget) {
+    app.use('/graphql', createProxyMiddleware({ target: apiProxyTarget }))
+}
+
+const UI_API_ENDPOINT = process.env.UI_API_ENDPOINT
 const env = { UI_API_ENDPOINT }
 
 // Make a route to give browser access to env
