@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "nodemon -e js,graphql -w . -w .env server.js",
+        "lint": "eslint .",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -20,6 +21,12 @@
         "express": "^4.17.1",
         "graphql": "^15.3.0",
         "mongodb": "^3.6.0",
+        "node-fetch": "^2.6.0",
         "nodemon": "^1.18.9"
+    },
+    "devDependencies": {
+        "eslint": "^7.7.0",
+        "eslint-config-airbnb-base": "^14.2.0",
+        "eslint-plugin-import": "^2.22.0"
     }
 }

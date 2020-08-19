@@ -22,8 +22,25 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-// Common utility function
+/* eslint "react/react-in-jsx-scope": "off" */
+
+/* globals React ReactDOM */
+
+/* eslint "react/jsx-no-undef": "off" */
+
+/* eslint "no-alert": "off" */
+var dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
+
+function jsonDateReviver(key, value) {
+  if (dateRegex.test(value)) {
+    return new Date(value);
+  }
+
+  return value;
+} // Common utility function
 // Handles all API calls and reports errors
+
+
 function graphQLFetch(_x) {
   return _graphQLFetch.apply(this, arguments);
 }
@@ -44,7 +61,7 @@ function _graphQLFetch() {
             variables = _args.length > 1 && _args[1] !== undefined ? _args[1] : {};
             _context.prev = 1;
             _context.next = 4;
-            return fetch('/graphql', {
+            return fetch(window.ENV.UI_API_ENDPOINT, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -65,9 +82,9 @@ function _graphQLFetch() {
             result = JSON.parse(body, jsonDateReviver);
 
             if (result.errors) {
-              error = result.error[0];
+              error = result.errors[0];
 
-              if (error.extensions.code == 'BAD_USER_INPUT') {
+              if (error.extensions.code === 'BAD_USER_INPUT') {
                 details = error.extensions.exception.errors.join('\n ');
                 alert("".concat(error.message, ":\n ").concat(details));
               } else {
@@ -83,6 +100,9 @@ function _graphQLFetch() {
             alert("Error ".concat(_context.t0.message));
 
           case 16:
+            return _context.abrupt("return", false);
+
+          case 17:
           case "end":
             return _context.stop();
         }
@@ -90,16 +110,6 @@ function _graphQLFetch() {
     }, _callee, null, [[1, 13]]);
   }));
   return _graphQLFetch.apply(this, arguments);
-}
-
-var dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
-
-function jsonDateReviver(key, value) {
-  if (dateRegex.test(value)) {
-    return new Date(value);
-  }
-
-  return value;
 }
 
 function IssueFilter() {
@@ -124,15 +134,18 @@ function _fetchIssues() {
           case 3:
             data = _context2.sent;
 
-            if (data) {
-              console.log('fetchIssues result:', data);
-              dispatchIssues({
-                action: 'FETCH_SUCCESS',
-                payload: data.issueList
-              });
+            if (!data) {
+              _context2.next = 7;
+              break;
             }
 
-          case 5:
+            console.log('fetchIssues result:', data);
+            return _context2.abrupt("return", data.issueList);
+
+          case 7:
+            return _context2.abrupt("return", {});
+
+          case 8:
           case "end":
             return _context2.stop();
         }
@@ -150,31 +163,13 @@ function issuesReducer(state, action) {
       });
 
     case 'CREATE':
-      console.log('Create issue', action.issue);
-      var query = "mutation issueAdd($issue: IssueInputs!) {\n                issueAdd(issue: $issue) {\n                    id\n                }\n            }";
-      fetch('/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          query: query,
-          variables: {
-            issue: issue
-          }
-        })
-      }).then(function (response) {
-        return response.json();
-      }).then(function (data) {
-        console.log('mutation issueAdd response', data);
-        loadData().then(function (result) {
-          return setIssues(result.data.issueList);
-        });
-      });
+      break;
 
     default:
       throw new Error();
   }
+
+  return {};
 }
 
 function IssueTable() {
@@ -187,7 +182,12 @@ function IssueTable() {
 
   console.log('State: issues', issues);
   React.useEffect(function () {
-    fetchIssues();
+    fetchIssues().then(function (result) {
+      dispatchIssues({
+        type: 'FETCH_SUCCESS',
+        payload: result
+      });
+    });
   }, []);
   var issueRows = issues.data.map(function (issue) {
     return /*#__PURE__*/React.createElement(IssueRow, {
@@ -205,9 +205,18 @@ function IssueTable() {
       title: form.title.value,
       due: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 10)
     };
-    dispatchIssues({
-      type: 'create',
+    console.log('Create issue', issue);
+    var query = "mutation issueAdd($issue: IssueInputs!) {\n            issueAdd(issue: $issue) {\n                id\n            }\n        }";
+    graphQLFetch(query, {
       issue: issue
+    }).then(function (result) {
+      console.log('mutation issueAdd response', result);
+      fetchIssues().then(function (payload) {
+        dispatchIssues({
+          type: 'FETCH_SUCCESS',
+          payload: payload
+        });
+      });
     });
   };
 
