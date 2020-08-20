@@ -1,5 +1,9 @@
 "use strict";
 
+var _graphQlFetch = _interopRequireDefault(require("./graphQlFetch.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -22,96 +26,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-/* eslint "react/react-in-jsx-scope": "off" */
-
-/* globals React ReactDOM */
-
-/* eslint "react/jsx-no-undef": "off" */
-
-/* eslint "no-alert": "off" */
-var dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
-
-function jsonDateReviver(key, value) {
-  if (dateRegex.test(value)) {
-    return new Date(value);
-  }
-
-  return value;
-} // Common utility function
-// Handles all API calls and reports errors
-
-
-function graphQLFetch(_x) {
-  return _graphQLFetch.apply(this, arguments);
-}
-
-function _graphQLFetch() {
-  _graphQLFetch = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(query) {
-    var variables,
-        response,
-        body,
-        result,
-        error,
-        details,
-        _args = arguments;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            variables = _args.length > 1 && _args[1] !== undefined ? _args[1] : {};
-            _context.prev = 1;
-            _context.next = 4;
-            return fetch(window.ENV.UI_API_ENDPOINT, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                query: query,
-                variables: variables
-              })
-            });
-
-          case 4:
-            response = _context.sent;
-            _context.next = 7;
-            return response.text();
-
-          case 7:
-            body = _context.sent;
-            result = JSON.parse(body, jsonDateReviver);
-
-            if (result.errors) {
-              error = result.errors[0];
-
-              if (error.extensions.code === 'BAD_USER_INPUT') {
-                details = error.extensions.exception.errors.join('\n ');
-                alert("".concat(error.message, ":\n ").concat(details));
-              } else {
-                alert("".concat(error.extensions.code, ": ").concat(error.message));
-              }
-            }
-
-            return _context.abrupt("return", result.data);
-
-          case 13:
-            _context.prev = 13;
-            _context.t0 = _context["catch"](1);
-            alert("Error ".concat(_context.t0.message));
-
-          case 16:
-            return _context.abrupt("return", false);
-
-          case 17:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee, null, [[1, 13]]);
-  }));
-  return _graphQLFetch.apply(this, arguments);
-}
-
 function IssueFilter() {
   return /*#__PURE__*/React.createElement("div", null, "foo");
 }
@@ -121,36 +35,36 @@ function fetchIssues() {
 }
 
 function _fetchIssues() {
-  _fetchIssues = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+  _fetchIssues = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
     var query, data;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context.prev = _context.next) {
           case 0:
             query = 'query { issueList { id title status, owner, created, effort, due } }';
-            _context2.next = 3;
-            return graphQLFetch(query);
+            _context.next = 3;
+            return (0, _graphQlFetch.default)(query);
 
           case 3:
-            data = _context2.sent;
+            data = _context.sent;
 
             if (!data) {
-              _context2.next = 7;
+              _context.next = 7;
               break;
             }
 
             console.log('fetchIssues result:', data);
-            return _context2.abrupt("return", data.issueList);
+            return _context.abrupt("return", data.issueList);
 
           case 7:
-            return _context2.abrupt("return", {});
+            return _context.abrupt("return", {});
 
           case 8:
           case "end":
-            return _context2.stop();
+            return _context.stop();
         }
       }
-    }, _callee2);
+    }, _callee);
   }));
   return _fetchIssues.apply(this, arguments);
 }
@@ -207,7 +121,7 @@ function IssueTable() {
     };
     console.log('Create issue', issue);
     var query = "mutation issueAdd($issue: IssueInputs!) {\n            issueAdd(issue: $issue) {\n                id\n            }\n        }";
-    graphQLFetch(query, {
+    (0, _graphQlFetch.default)(query, {
       issue: issue
     }).then(function (result) {
       console.log('mutation issueAdd response', result);

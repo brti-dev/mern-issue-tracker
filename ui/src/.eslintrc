@@ -5,6 +5,7 @@
     },
     "rules": {
         "react/prop-types": "off",
-        "no-console": "off"
+        "no-console": "off",
+        "import/extensions": [ "error", "always", { "ignorePackages": true } ], // Exception for including extensions in application modules
     }
 }
