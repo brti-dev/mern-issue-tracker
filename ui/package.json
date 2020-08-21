@@ -2,11 +2,12 @@
   "name": "pro-mern-stack-2-ui",
   "version": "1.0.0",
   "description": "Pro Mern Stack ver 2 -UI",
-  "main": "index.js",
+  "private": true,
+  "main": "uiserver.js",
   "scripts": {
     "start": "nodemon -w uiserver.js -w .env uiserver.js",
-    "compile": "babel src --out-dir public",
-    "watch": "babel src --out-dir public --watch --verbose",
+    "compile": "webpack --mode production",
+    "watch": "webpack --watch",
     "lint": "eslint . --ext js,jsx --ignore-pattern public"
   },
   "author": "",
@@ -24,6 +25,7 @@
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-react": "^7.10.1",
+    "babel-loader": "^8.1.0",
     "eslint": "^7.7.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",

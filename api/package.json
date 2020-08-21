@@ -2,7 +2,8 @@
     "name": "pro-mern-stack-2-api",
     "version": "1.0.0",
     "description": "Pro MERN Stack (2nd Edition) API",
-    "main": "index.js",
+    "private": true,
+    "main": "server.js",
     "scripts": {
         "start": "nodemon -e js,graphql -w . -w .env server.js",
         "lint": "eslint .",
