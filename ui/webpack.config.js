@@ -23,4 +23,7 @@ module.exports = {
             chunks: 'all',
         },
     },
+    // Debug tool -- see source code instead of compiled code
+    // Dev console > sources > webpack > . > [source files]
+    devtool: 'source-map',
 };
