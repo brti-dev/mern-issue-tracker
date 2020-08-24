@@ -25,13 +25,12 @@ async function connectToDb() {
  * @returns {number} Updated count
  */
 async function getNextSequence(name) {
-    // Increment counter and return updated document
     const result = await db.collection('counters').findOneAndUpdate(
         { _id: name },
         { $inc: { current: 1 } },
         { returnNewDocument: true },
     );
-    return result.value.current;
+    return result.value.current + 1;
 }
 
 function getDb() {

@@ -2,7 +2,7 @@
 * Run using the mongo shell. For remote databases, ensure that the
 * connection string is supplied in the command line. For example:
 * localhost:
-* mongo issuetracker scripts/init.mongo.js
+* mongo issuetracker scripts/initmongo.js
 * Atlas:
 * mongo <db_url> scripts/init.mongo.js
 * MLab:
