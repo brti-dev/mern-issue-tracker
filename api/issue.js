@@ -1,9 +1,25 @@
 const { UserInputError } = require('apollo-server-express');
 const { getDb, getNextSequence } = require('./db');
 
-async function list() {
+/**
+ * List of issues
+ * GraphQL Resolver function
+ *
+ * @param {Object} obj Contains the result returned from the resolver on the parent field.
+ * @param {Object} args Arguments passed into the field in the query
+ * @param {Object} context
+ * @param {*} info
+ *
+ * @returns {Array} Issues
+ */
+async function list(_, { status }) {
     const db = getDb();
-    const issues = await db.collection('issues').find({}).toArray();
+    const filter = {};
+    if (status) {
+        filter.status = status;
+    }
+    const issues = await db.collection('issues').find(filter).toArray();
+
     return issues;
 }
 

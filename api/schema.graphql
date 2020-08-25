@@ -27,14 +27,41 @@ input IssueInputs {
     due: Date
 }
 
+type Product {
+    _id: ID!
+    sku: Int!
+    title: String!
+    description: String
+    picture: Boolean!
+    price: Float!
+    cost: Float
+    inventory: Int!
+    created: Date!
+}
+
+input ProductInputs {
+    "Optional, generated automatically if none given"
+    sku: Int
+    title: String!
+    description: String
+    "Optional, defaults to false"
+    Picture: Boolean
+    Price: Float!
+    "Optional, for management use only"
+    Cost: Float
+    Inventory: Int!
+}
+
 # Top level declarations
 
 type Query {
     about: String!
-    issueList: [Issue!]!
+    issueList(status: StatusType): [Issue!]!
+    productList: [Product!]!
 }
 
 type Mutation {
     setAboutMessage(message: String!): String
     issueAdd(issue: IssueInputs!): Issue!
+    productAdd(product: ProductInputs!): Product!
 }
