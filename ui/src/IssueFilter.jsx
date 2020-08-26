@@ -1,13 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function IssueFilter() {
     return (
         <div>
-            <a href="/#/issues">All Issues</a>
+            <Link to="/issues">All Issues</Link>
             <span>|</span>
-            <a href="/#/issues?status=New">New Issues</a>
+            <Link to="/issues?status=New">New Issues</Link>
             <span>|</span>
-            <a href="/#/issues?status=Assigned">Assigned Issues</a>
+            <Link to="/issues?status=Assigned">Assigned Issues</Link>
         </div>
     );
 }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 import graphQlFetch from './graphQlFetch.js';
 
@@ -48,7 +49,7 @@ function IssueRow({ issue }) {
             <td>{issue.effort}</td>
             <td>{issue.due && issue.due}</td>
             <td>{issue.title}</td>
-            <td><a href={`/#/edit/${issue.id}`}>Edit</a></td>
+            <td><Link to={`/edit/${issue.id}`}>Edit</Link></td>
         </tr>
     );
 }
