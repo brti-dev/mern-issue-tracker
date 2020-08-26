@@ -12,13 +12,16 @@ const { getDb, getNextSequence } = require('./db');
  *
  * @returns {Array} Issues
  */
-async function list(_, { status }) {
-    const db = getDb();
+async function list(_, args) {
+    // arg `status` passed by qs via React Router (`Contents` component)
+    // /#/issues?status=New
+    const { status } = args;
     const filter = {};
     if (status) {
         filter.status = status;
     }
-    const issues = await db.collection('issues').find(filter).toArray();
+
+    const issues = await getDb().collection('issues').find(filter).toArray();
 
     return issues;
 }

@@ -6,6 +6,11 @@ import IssueEdit from './IssueEdit.jsx';
 
 const NotFound = () => <h1>Page Not Found</h1>;
 
+/**
+ * React Router routes defined here
+ *
+ * @returns {JSX}
+ */
 export default function Contents() {
     return (
         <Switch>

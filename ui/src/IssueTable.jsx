@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import graphQlFetch from './graphQlFetch.js';
 
-async function fetchIssues() {
-    const query = 'query { issueList { id title status, owner, created, effort, due } }';
+async function fetchIssues(vars = {}) {
+    console.log('fetchIssues', vars);
 
-    const data = await graphQlFetch(query);
+    const query = `query issueList($status: StatusType) {
+        issueList (status: $status) {
+            id title status owner created effort due
+        }
+    }`;
+    const data = await graphQlFetch(query, vars);
 
     if (data) {
         console.log('fetchIssues result:', data);
@@ -48,15 +53,20 @@ function IssueRow({ issue }) {
     );
 }
 
-export default function IssueTable() {
+/**
+ * @param {Object} vars Variables passed by parent Component `IssueList`
+ */
+export default function IssueTable({ vars }) {
+    console.log('IssueTable component', vars);
+
     const [issues, dispatchIssues] = React.useReducer(issuesReducer, { data: [] });
     console.log('State: issues', issues);
 
     React.useEffect(() => {
-        fetchIssues().then((result) => {
+        fetchIssues(vars).then((result) => {
             dispatchIssues({ type: 'FETCH_SUCCESS', payload: result });
         });
-    }, []);
+    }, [vars]);
 
     const issueRows = issues.data.map((issue) => <IssueRow key={issue.id} issue={issue} />);
 
@@ -82,7 +92,7 @@ export default function IssueTable() {
 
         graphQlFetch(query, { issue }).then((result) => {
             console.log('mutation issueAdd response', result);
-            fetchIssues().then((payload) => {
+            fetchIssues(vars).then((payload) => {
                 dispatchIssues({ type: 'FETCH_SUCCESS', payload });
             });
         });
