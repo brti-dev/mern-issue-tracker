@@ -4,7 +4,8 @@ import IssueFilter from './IssueFilter.jsx';
 import IssueTable from './IssueTable.jsx';
 
 /**
- * @param {Object} props Includes props supplied by React Router for component to handle
+ * @param {Object} props Includes props supplied by React Router for component
+ * to handle (`Contents` component).
  */
 export default function IssueList(props) {
     /** @param location Object from React Router with qs params */
