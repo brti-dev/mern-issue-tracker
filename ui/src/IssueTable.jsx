@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
+import { Link, NavLink, withRouter } from 'react-router-dom';
 
 import graphQlFetch from './graphQlFetch.js';
 
@@ -39,7 +40,13 @@ function issuesReducer(state, action) {
     return {};
 }
 
-function IssueRow({ issue }) {
+const IssueRow = withRouter((props) => {
+    console.log('<IssueRow>', props);
+
+    const { issue, location: { search } } = props;
+
+    const selectLocation = { pathname: `/issues/${issue.id}`, search };
+
     return (
         <tr>
             <td>{issue.id}</td>
@@ -49,10 +56,14 @@ function IssueRow({ issue }) {
             <td>{issue.effort}</td>
             <td>{issue.due && issue.due}</td>
             <td>{issue.title}</td>
-            <td><Link to={`/edit/${issue.id}`}>Edit</Link></td>
+            <td>
+                <Link to={`/edit/${issue.id}`}>Edit</Link>
+                <span>|</span>
+                <NavLink to={selectLocation}>Select</NavLink>
+            </td>
         </tr>
     );
-}
+});
 
 /**
  * @param {Object} vars Variables passed by parent Component `IssueList`

@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 /**
  * Navigation and functions for filtering IssueTable.
- * Component not a `Route` so need to pass through withRouter function to get
+ * Component not a <Route> so need to pass through withRouter function to get
  * access to props.history.
  *
  * @param {Object} props Props supplied by React Router via withRouter method
