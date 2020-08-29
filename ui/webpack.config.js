@@ -7,6 +7,7 @@ module.exports = {
     output: {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'public'),
+        publicPath: '/', // This param added for Browser History Router, not needed for Hash Raouter
     },
     module: {
         rules: [

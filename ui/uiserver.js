@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware'); // Not implemented
+const path = require('path');
 
 const app = express();
 
@@ -37,6 +38,11 @@ const env = { UI_API_ENDPOINT };
 // Make a route to give browser access to env
 app.get('/env.js', (req, res) => {
     res.send(`window.ENV = ${JSON.stringify(env)}`);
+});
+
+// Respond with index.html for all requests
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve('public/index.html'));
 });
 
 const port = process.env.UI_SERVER_PORT || 8000;
