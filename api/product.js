@@ -10,19 +10,24 @@ const { getDb, getNextSequence } = require('./db');
  * @param {Object} context
  * @param {*} info
  *
- * @returns {Array} products
+ * @returns {Array} Products
  */
-async function list(_, { status }) {
+async function list(_, { category }) {
     const db = getDb();
     const filter = {};
-    if (status) {
-        filter.status = status;
+    if (category) {
+        filter.category = category;
     }
     const products = await db.collection('products').find(filter).toArray();
 
     return products;
 }
 
+/**
+ * Check new product object for errors.
+ *
+ * @param {Object} product Product
+ */
 function validate(product) {
     const errors = [];
 
@@ -35,6 +40,13 @@ function validate(product) {
     }
 }
 
+/**
+ * Add a new product to db.
+ * GraphQL Resolver function
+ *
+ * @param {Object} obj Contains the result returned from the resolver on the parent field.
+ * @param {Object} args Arguments passed into the field in the query
+ */
 async function add(_, { product }) {
     validate(product);
 
@@ -51,4 +63,18 @@ async function add(_, { product }) {
     return savedProduct;
 }
 
-module.exports = { list, add };
+/**
+ * Get a product from db.
+ * GraphQL Resolver function
+ *
+ * @param {Object} obj Contains the result returned from the resolver on the parent field.
+ * @param {Object} args Arguments passed into the field in the query
+ */
+async function get(_, { id }) {
+    const db = getDb();
+    const issue = await db.collection('issues').findOne({ id });
+
+    return issue;
+}
+
+module.exports = { list, add, get };

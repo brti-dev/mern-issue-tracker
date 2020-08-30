@@ -1,5 +1,6 @@
 scalar Date
 
+"Issue status type options"
 enum StatusType {
     New
     Assigned
@@ -29,11 +30,18 @@ input IssueInputs {
     description: String
 }
 
+enum ProductCategory {
+    fruit
+    vegetable
+    other
+}
+
 type Product {
     _id: ID!
     sku: Int!
     title: String!
     description: String
+    category: ProductCategory!
     picture: Boolean!
     price: Float!
     cost: Float
@@ -46,6 +54,8 @@ input ProductInputs {
     sku: Int
     title: String!
     description: String
+    "Defaults to 'other'"
+    category: ProductCategory = other
     "Optional, defaults to false"
     Picture: Boolean
     Price: Float!
@@ -60,7 +70,8 @@ type Query {
     about: String!
     issueList(status: StatusType): [Issue!]!
     issue(id: Int!): Issue!
-    productList: [Product!]!
+    productList(category: ProductCategory): [Product!]!
+    product(sku: Int!): Product!
 }
 
 type Mutation {

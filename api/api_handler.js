@@ -11,8 +11,9 @@ const resolvers = {
     Query: {
         about: about.getMessage,
         issueList: issue.list,
-        productList: product.list,
         issue: issue.get,
+        productList: product.list,
+        product: product.get,
     },
     Mutation: {
         setAboutMessage: about.setMessage,
