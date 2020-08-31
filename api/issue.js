@@ -15,10 +15,21 @@ const { getDb, getNextSequence } = require('./db');
 async function list(_, args) {
     // arg `status` passed by qs via React Router (`Contents` component)
     // /#/issues?status=New
-    const { status } = args;
+    const { status, effortMin, effortMax } = args;
     const filter = {};
     if (status) {
         filter.status = status;
+    }
+
+    // filter `effort` field
+    if (effortMin !== undefined || effortMax !== undefined) {
+        filter.effort = {};
+        if (effortMin !== undefined) {
+            filter.effort.$gte = effortMin;
+        }
+        if (effortMax !== undefined) {
+            filter.effort.$lte = effortMax;
+        }
     }
 
     const issues = await getDb().collection('issues').find(filter).toArray();

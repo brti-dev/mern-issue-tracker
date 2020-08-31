@@ -7,8 +7,16 @@ import graphQlFetch from './graphQlFetch.js';
 async function fetchIssues(vars = {}) {
     console.log('fetchIssues', vars);
 
-    const query = `query issueList($status: StatusType) {
-        issueList (status: $status) {
+    const query = `query issueList(
+        $status: StatusType
+        $effortMin: Int
+        $effortMax: Int
+    ) {
+        issueList(
+            status: $status
+            effortMin: $effortMin,
+            effortMax: $effortMax
+        ) {
             id title status owner created effort due
         }
     }`;
@@ -69,7 +77,7 @@ const IssueRow = withRouter((props) => {
  * @param {Object} vars Variables passed by parent Component `IssueList`
  */
 export default function IssueTable({ vars }) {
-    console.log('IssueTable component', vars);
+    console.log('<IssueTable>', vars);
 
     const [issues, dispatchIssues] = React.useReducer(issuesReducer, { data: [] });
     console.log('State: issues', issues);

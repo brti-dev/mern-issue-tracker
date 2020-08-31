@@ -12,27 +12,46 @@ import IssueDetail from './IssueDetail.jsx';
  * to handle (`Contents` component).
  */
 export default function IssueList(props) {
+    console.log('<IssueList>', props);
+
     /** @param location Object from React Router with qs params */
     /** @param search Query string */
     const { location: { search } } = props;
 
-    const params = new URLSearchParams(search);
+    const queryParams = new URLSearchParams(search);
     const vars = {};
-    if (params.get('status')) {
-        vars.status = params.get('status');
+
+    // Querystring: parse `status`
+    if (queryParams.get('status')) {
+        vars.status = queryParams.get('status');
+    }
+
+    // Querystring: parse `effortmin` and `effortmax`
+    const effortMin = parseInt(queryParams.get('effortMin'), 10);
+    if (!Number.isNaN(effortMin)) {
+        vars.effortMin = effortMin;
+    }
+    const effortMax = parseInt(queryParams.get('effortMax'), 10);
+    if (!Number.isNaN(effortMax)) {
+        vars.effortMax = effortMax;
     }
 
     /**
+     * Route match object
+     * Info about how <Route path> matched URL.
+     * This route: <Route path="/issues" component={IssueList} />
+     *
      * @param path Allows building <Route> paths relative to parent route.
      * @param url Build relative links
      */
-    const { path } = useRouteMatch();
+    const { match: { path, url } } = props;
 
     return (
         <>
             <h1>Issue Tracker</h1>
             <IssueFilter />
             <IssueTable vars={vars} />
+            {/* If the URL matches path, render this component */}
             <Route path={`${path}/:id`} component={IssueDetail} />
         </>
     );
