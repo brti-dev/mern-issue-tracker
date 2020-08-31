@@ -1,8 +1,8 @@
 import React from 'react';
-
 import { Link, NavLink, withRouter } from 'react-router-dom';
 
 import graphQlFetch from './graphQlFetch.js';
+import IssueAdd from './IssueAdd.jsx';
 
 async function fetchIssues(vars = {}) {
     console.log('fetchIssues', vars);
@@ -21,9 +21,9 @@ async function fetchIssues(vars = {}) {
         }
     }`;
     const data = await graphQlFetch(query, vars);
+    console.log('fetchIssues result:', data);
 
     if (data) {
-        console.log('fetchIssues result:', data);
         return data.issueList;
     }
 
@@ -82,41 +82,17 @@ export default function IssueTable({ vars }) {
     const [issues, dispatchIssues] = React.useReducer(issuesReducer, { data: [] });
     console.log('State: issues', issues);
 
-    React.useEffect(() => {
+    const handleFetchIssues = React.useCallback(() => {
         fetchIssues(vars).then((result) => {
             dispatchIssues({ type: 'FETCH_SUCCESS', payload: result });
         });
     }, [vars]);
 
+    React.useEffect(() => {
+        handleFetchIssues();
+    }, [handleFetchIssues]);
+
     const issueRows = issues.data.map((issue) => <IssueRow key={issue.id} issue={issue} />);
-
-    const formRef = React.useRef();
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        const form = formRef.current;
-        const issue = {
-            owner: form.owner.value,
-            title: form.title.value,
-            due: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 10),
-        };
-
-        console.log('Create issue', issue);
-
-        const query = `mutation issueAdd($issue: IssueInputs!) {
-            issueAdd(issue: $issue) {
-                id
-            }
-        }`;
-
-        graphQlFetch(query, { issue }).then((result) => {
-            console.log('mutation issueAdd response', result);
-            fetchIssues(vars).then((payload) => {
-                dispatchIssues({ type: 'FETCH_SUCCESS', payload });
-            });
-        });
-    };
 
     return (
         <>
@@ -137,11 +113,7 @@ export default function IssueTable({ vars }) {
                     {issueRows}
                 </tbody>
             </table>
-            <form ref={formRef} onSubmit={handleSubmit}>
-                <input type="text" name="owner" placeholder="Owner" />
-                <input type="text" name="title" placeholder="Title" />
-                <button type="submit">Add</button>
-            </form>
+            <IssueAdd onAdd={handleFetchIssues} />
         </>
     );
 }
