@@ -19,7 +19,7 @@ const resolvers = {
         issueAdd: issue.add,
         productAdd: product.add,
     },
-    Date: GraphQLDate,
+    GraphQLDate,
 };
 
 const server = new ApolloServer({

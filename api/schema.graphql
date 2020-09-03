@@ -1,4 +1,4 @@
-scalar Date
+scalar GraphQLDate
 
 enum StatusType {
     New
@@ -14,8 +14,8 @@ type Issue {
     status: StatusType!
     owner: String
     effort: Int
-    created: Date!
-    due: Date
+    created: GraphQLDate!
+    due: GraphQLDate
     description: String
 }
 
@@ -25,7 +25,7 @@ input IssueInputs {
     status: StatusType = New
     owner: String
     effort: Int
-    due: Date
+    due: GraphQLDate
     description: String
 }
 
@@ -38,7 +38,7 @@ type Product {
     price: Float!
     cost: Float
     inventory: Int!
-    created: Date!
+    created: GraphQLDate!
 }
 
 input ProductInputs {

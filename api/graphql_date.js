@@ -2,14 +2,14 @@ const { GraphQLScalarType } = require('graphql');
 const { Kind } = require('graphql/language');
 
 const GraphQLDate = new GraphQLScalarType({
-    name: 'Date',
+    name: 'GraphQLDate',
     description: 'A Date() type in GraphQL as a scalar',
+    serialize(value) {
+        return value.toISOString(); // Value sent to the client
+    },
     parseValue(value) { // Value from the client
         const dateValue = new Date(value);
         return Number.isNaN(dateValue.getTime()) ? undefined : dateValue;
-    },
-    serialize(value) {
-        return value.getTime(); // Value sent to the client
     },
     parseLiteral(ast) {
         if (ast.kind === Kind.STRING) {

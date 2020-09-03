@@ -1,5 +1,11 @@
 const { UserInputError } = require('apollo-server-express');
+
 const { getDb, getNextSequence } = require('./db');
+
+/**
+ * GraphQL resolver functions
+ * Queries MongoDB
+ */
 
 /**
  * List of issues
