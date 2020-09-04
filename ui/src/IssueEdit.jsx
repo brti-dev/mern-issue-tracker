@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import graphQlFetch from './graphQlFetch.js';
+import NumberInput from './NumberInput.jsx';
 
 async function loadData(id) {
     const query = `query issue($id: Int!) {
@@ -18,7 +19,6 @@ async function loadData(id) {
         // Convert data to strings and perform null checks so variables can be used in HTML forms.
         issue.created = issue.created ? issue.created.toDateString() : '';
         issue.due = issue.due ? issue.due.toDateString() : '';
-        issue.effort = issue.effort != null ? issue.effort.toString() : '';
         issue.owner = issue.owner != null ? issue.owner : '';
         issue.description = issue.description != null ? issue.description : '';
 
@@ -96,8 +96,11 @@ export default function IssueEdit({ match }) {
         console.log(issue.data);
     };
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
+    const handleChange = (event, naturalValue) => {
+        console.log('handleChange', event.target, naturalValue);
+        const { name, value: textValue } = event.target;
+        const value = naturalValue === undefined ? textValue : naturalValue;
+
         dispatchIssue({ type: 'UPDATE_FIELD', name, value });
     };
 
@@ -111,7 +114,6 @@ export default function IssueEdit({ match }) {
 
             {!issue.isError && !issue.isLoading && (
                 <form onSubmit={handleSubmit}>
-                    <p>{JSON.stringify(issue.data)}</p>
                     <table>
                         <tbody>
                             <tr>
@@ -138,7 +140,7 @@ export default function IssueEdit({ match }) {
                             <tr>
                                 <td>Effort:</td>
                                 <td>
-                                    <input type="number" name="effort" value={issue.data.effort} onChange={handleChange} />
+                                    <NumberInput key={id} name="effort" value={issue.data.effort} onChange={handleChange} />
                                 </td>
                             </tr>
                             <tr>
@@ -168,6 +170,7 @@ export default function IssueEdit({ match }) {
                     <Link to={`/edit/${id - 1}`}>Prev</Link>
                     {' | '}
                     <Link to={`/edit/${id + 1}`}>Next</Link>
+                    <p>{JSON.stringify(issue.data)}</p>
                 </form>
             )}
         </div>
