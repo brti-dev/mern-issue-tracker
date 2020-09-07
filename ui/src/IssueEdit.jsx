@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import graphQlFetch from './graphQlFetch.js';
 import NumberInput from './NumberInput.jsx';
 import DateInput from './DateInput.jsx';
+import TextInput from './TextInput.jsx';
 
 async function loadData(id) {
     const query = `query issue($id: Int!) {
@@ -17,10 +18,6 @@ async function loadData(id) {
 
     if (data) {
         const { issue } = data;
-        // Convert data to strings and perform null checks so variables can be used in HTML forms.
-        issue.created = issue.created ? issue.created.toDateString() : '';
-        issue.owner = issue.owner != null ? issue.owner : '';
-        issue.description = issue.description != null ? issue.description : '';
 
         return issue;
     }
@@ -144,7 +141,7 @@ export default function IssueEdit({ match }) {
                         <tbody>
                             <tr>
                                 <td>Created:</td>
-                                <td>{issue.data.created}</td>
+                                <td>{issue.data.created ? issue.data.created.toDateString() : ''}</td>
                             </tr>
                             <tr>
                                 <td>Status:</td>
@@ -160,7 +157,7 @@ export default function IssueEdit({ match }) {
                             <tr>
                                 <td>Owner:</td>
                                 <td>
-                                    <input type="text" name="owner" value={issue.data.owner} onChange={handleChange} />
+                                    <TextInput key={id} name="owner" value={issue.data.owner} onChange={handleChange} />
                                 </td>
                             </tr>
                             <tr>
@@ -178,13 +175,13 @@ export default function IssueEdit({ match }) {
                             <tr>
                                 <td>Title:</td>
                                 <td>
-                                    <input type="text" name="title" value={issue.data.title} onChange={handleChange} />
+                                    <TextInput key={id} name="title" value={issue.data.title} onChange={handleChange} />
                                 </td>
                             </tr>
                             <tr>
                                 <td>Description:</td>
                                 <td>
-                                    <textarea name="description" value={issue.data.description} onChange={handleChange} />
+                                    <TextInput key={id} tag="textarea" name="description" value={issue.data.description} onChange={handleChange} />
                                 </td>
                             </tr>
                             <tr>
