@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import graphQlFetch from './graphQlFetch.js';
 import NumberInput from './NumberInput.jsx';
+import DateInput from './DateInput.jsx';
 
 async function loadData(id) {
     const query = `query issue($id: Int!) {
@@ -18,7 +19,6 @@ async function loadData(id) {
         const { issue } = data;
         // Convert data to strings and perform null checks so variables can be used in HTML forms.
         issue.created = issue.created ? issue.created.toDateString() : '';
-        issue.due = issue.due ? issue.due.toDateString() : '';
         issue.owner = issue.owner != null ? issue.owner : '';
         issue.description = issue.description != null ? issue.description : '';
 
@@ -32,6 +32,7 @@ const initialState = {
     data: {},
     isLoading: false,
     isError: false,
+    invalidFields: new Set(), // Added for DateInput
 };
 function reducer(state, action) {
     switch (action.type) {
@@ -40,6 +41,7 @@ function reducer(state, action) {
                 ...state,
                 isLoading: true,
                 isError: false,
+                invalidFields: new Set(),
             };
 
         case 'FETCH_SUCCESS':
@@ -48,6 +50,7 @@ function reducer(state, action) {
                 data: action.payload,
                 isLoading: false,
                 isError: false,
+                invalidFields: new Set(),
             };
 
         case 'FETCH_FAILURE':
@@ -68,6 +71,11 @@ function reducer(state, action) {
                 },
             };
         }
+
+        case 'UPDATE_VALIDITY':
+            return {
+                ...state,
+            };
 
         default:
             throw new Error();
@@ -96,12 +104,30 @@ export default function IssueEdit({ match }) {
         console.log(issue.data);
     };
 
-    const handleChange = (event, naturalValue) => {
+    /**
+     * Handle form input change by updating state
+     *
+     * @param {Event} event Event handler
+     * @param {String} naturalValue Passed from a custom component; Parsed or modified value that
+     * should take precedence over target.value.
+     */
+    const handleChange = (event, naturalValue = null) => {
         console.log('handleChange', event.target, naturalValue);
         const { name, value: textValue } = event.target;
-        const value = naturalValue === undefined ? textValue : naturalValue;
+        const value = naturalValue || textValue;
 
         dispatchIssue({ type: 'UPDATE_FIELD', name, value });
+    };
+
+    /**
+     * Manage state
+     * @param {Event} event Event object
+     * @param {Boolean} isValid Checks if value is valid based on input type
+     */
+    const handleValidityChange = (event, isValid) => {
+        const { name } = event.target;
+
+        dispatchIssue({ type: 'UPDATE_VALIDITY', name, isValid });
     };
 
     return (
@@ -146,7 +172,7 @@ export default function IssueEdit({ match }) {
                             <tr>
                                 <td>Due:</td>
                                 <td>
-                                    <input type="date" name="due" value={issue.data.due} onChange={handleChange} />
+                                    <DateInput key={id} name="due" value={issue.data.due} onChange={handleChange} onValidityChange={handleValidityChange} />
                                 </td>
                             </tr>
                             <tr>
