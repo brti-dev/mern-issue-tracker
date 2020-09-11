@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, NavLink, withRouter } from 'react-router-dom';
+import { Link, NavLink, withRouter, useHistory, useLocation } from 'react-router-dom';
 
 import graphQlFetch from './graphQlFetch.js';
 import IssueAdd from './IssueAdd.jsx';
@@ -20,11 +20,11 @@ async function fetchIssues(vars = {}) {
             id title status owner created effort due
         }
     }`;
-    const data = await graphQlFetch(query, vars);
-    console.log('fetchIssues result:', data);
+    const result = await graphQlFetch(query, vars);
+    console.log('fetchIssues result:', result);
 
-    if (data) {
-        return data.issueList;
+    if (result) {
+        return result.issueList;
     }
 
     return {};
@@ -35,12 +35,14 @@ function issuesReducer(state, action) {
         case 'FETCH_SUCCESS':
             return {
                 ...state,
+                isError: false,
                 data: action.payload,
             };
 
         case 'CLOSE_ISSUE':
             return {
                 ...state,
+                isError: false,
                 data: state.data.map((issue) => {
                     if (issue.id === action.payload.id) {
                         return action.payload;
@@ -50,14 +52,22 @@ function issuesReducer(state, action) {
                 }),
             };
 
-        case 'CREATE':
-            break;
+        case 'DELETE':
+            return {
+                ...state,
+                isError: false,
+                data: state.data.filter((issue) => issue.id !== action.id),
+            };
+
+        case 'FAILURE':
+            return {
+                ...state,
+                isError: true,
+            };
 
         default:
             throw new Error();
     }
-
-    return {};
 }
 
 const IssueRow = withRouter((props) => {
@@ -67,6 +77,7 @@ const IssueRow = withRouter((props) => {
         issue,
         location: { search },
         closeIssue,
+        deleteIssue,
     } = props;
 
     const selectLocation = { pathname: `/issues/${issue.id}`, search };
@@ -86,16 +97,20 @@ const IssueRow = withRouter((props) => {
                 <NavLink to={selectLocation}>Select</NavLink>
                 <span>|</span>
                 <button type="button" disabled={issue.status === 'Closed'} onClick={() => { closeIssue(issue.id); }}>Close</button>
+                <button type="button" onClick={() => { deleteIssue(issue.id); }}>Delete</button>
             </td>
         </tr>
     );
 });
 
 /**
- * @param {Object} vars Variables passed by parent Component `IssueList`
+ * @param {Object} vars Filters passed by parent Component `IssueList`
  */
 export default function IssueTable({ vars }) {
     console.log('<IssueTable>', vars);
+
+    const history = useHistory();
+    const location = useLocation();
 
     const [issues, dispatchIssues] = React.useReducer(issuesReducer, { data: [] });
     console.log('State: issues', issues);
@@ -117,20 +132,44 @@ export default function IssueTable({ vars }) {
             }
         }`;
 
-        const data = await graphQlFetch(query, { id });
-        if (data) {
-            dispatchIssues({
-                type: 'CLOSE_ISSUE',
-                payload: data.issueUpdate,
-            });
+        /**
+         * @returns { "data": { "issueUpdate": Issue! } }
+         */
+        const result = await graphQlFetch(query, { id });
+        if (result) {
+            dispatchIssues({ type: 'CLOSE_ISSUE', payload: result.issueUpdate });
         } else {
-            handleFetchIssues();
+            dispatchIssues({ type: 'FAILURE' });
+        }
+    };
+
+    const deleteIssue = async (id) => {
+        const query = `mutation issueDelete($id: Int!) {
+            issueDelete(id: $id)
+        }`;
+
+        /**
+         * @returns { "data": { "issueDelete": Boolean } }
+         */
+        const result = await graphQlFetch(query, { id });
+        if (result && result.issueDelete) {
+            dispatchIssues({ type: 'DELETE', id });
+
+            if (location.pathname === `/issues/${id}`) {
+                history.push({ pathname: '/issues', search: location.search });
+            }
+        } else {
+            dispatchIssues({ type: 'FAILURE' });
         }
     };
 
     const issueRows = issues.data.map((issue) => (
-        <IssueRow key={issue.id} issue={issue} closeIssue={closeIssue} />
+        <IssueRow key={issue.id} issue={issue} closeIssue={closeIssue} deleteIssue={deleteIssue} />
     ));
+
+    if (issues.isFailure) {
+        return <p>Something went wrong.</p>;
+    }
 
     return (
         <>
