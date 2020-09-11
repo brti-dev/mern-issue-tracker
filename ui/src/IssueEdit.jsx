@@ -96,9 +96,29 @@ export default function IssueEdit({ match }) {
         });
     }, [id]);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(issue.data);
+
+        if (issue.invalidFields.size !== 0) {
+            return;
+        }
+
+        dispatchIssue({ type: 'INIT' });
+
+        const query = `mutation issueUpdate($id: Int!, $changes: IssueUpdateInputs!) {
+            issueUpdate(id: $id, changes: $changes) {
+              id title status owner effort created due description
+            }
+        }`;
+
+        // Strip of fields that cannot be changed
+        const { id: idStripped, created, ...changes } = issue.data;
+        const result = await graphQlFetch(query, { changes, id });
+        if (result) {
+            console.log('mutation result', result);
+            dispatchIssue({ type: 'FETCH_SUCCESS', payload: result.issueUpdate });
+            alert('Updated issue');
+        }
     };
 
     /**
