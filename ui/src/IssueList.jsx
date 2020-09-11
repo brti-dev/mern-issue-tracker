@@ -1,6 +1,6 @@
 import React from 'react';
 import URLSearchParams from '@ungap/url-search-params';
-import { Route, useRouteMatch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import IssueFilter from './IssueFilter.jsx';
 import IssueTable from './IssueTable.jsx';

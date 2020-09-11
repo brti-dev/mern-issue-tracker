@@ -38,6 +38,18 @@ function issuesReducer(state, action) {
                 data: action.payload,
             };
 
+        case 'CLOSE_ISSUE':
+            return {
+                ...state,
+                data: state.data.map((issue) => {
+                    if (issue.id === action.payload.id) {
+                        return action.payload;
+                    }
+
+                    return issue;
+                }),
+            };
+
         case 'CREATE':
             break;
 
@@ -51,7 +63,11 @@ function issuesReducer(state, action) {
 const IssueRow = withRouter((props) => {
     console.log('<IssueRow>', props);
 
-    const { issue, location: { search } } = props;
+    const {
+        issue,
+        location: { search },
+        closeIssue,
+    } = props;
 
     const selectLocation = { pathname: `/issues/${issue.id}`, search };
 
@@ -68,6 +84,8 @@ const IssueRow = withRouter((props) => {
                 <Link to={`/edit/${issue.id}`}>Edit</Link>
                 <span>|</span>
                 <NavLink to={selectLocation}>Select</NavLink>
+                <span>|</span>
+                <button type="button" disabled={issue.status === 'Closed'} onClick={() => { closeIssue(issue.id); }}>Close</button>
             </td>
         </tr>
     );
@@ -92,7 +110,27 @@ export default function IssueTable({ vars }) {
         handleFetchIssues();
     }, [handleFetchIssues]);
 
-    const issueRows = issues.data.map((issue) => <IssueRow key={issue.id} issue={issue} />);
+    const closeIssue = async (id) => {
+        const query = `mutation issueClose($id: Int!) {
+            issueUpdate(id: $id, changes: { status: Closed }) {
+                id title status owner effort created due description
+            }
+        }`;
+
+        const data = await graphQlFetch(query, { id });
+        if (data) {
+            dispatchIssues({
+                type: 'CLOSE_ISSUE',
+                payload: data.issueUpdate,
+            });
+        } else {
+            handleFetchIssues();
+        }
+    };
+
+    const issueRows = issues.data.map((issue) => (
+        <IssueRow key={issue.id} issue={issue} closeIssue={closeIssue} />
+    ));
 
     return (
         <>
