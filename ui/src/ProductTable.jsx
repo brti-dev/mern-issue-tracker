@@ -2,6 +2,11 @@ import React from 'react';
 
 import graphQlFetch from './graphQlFetch.js';
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+});
+
 async function fetchProducts(vars = {}) {
     const query = `query productList($category: ProductCategory) {
         productList (category: $category) {
@@ -48,11 +53,29 @@ function productsReducer(state, action) {
 function cartReducer(state, action) {
     console.log('cartReducer', state, action);
 
+    const { sku, price } = action.product;
+
     switch (action.type) {
         case 'ADD_ONE':
             return {
                 ...state,
                 totalQuantity: state.totalQuantity + 1,
+                subtotal: state.subtotal + price,
+                counts: {
+                    ...state.counts,
+                    [sku]: (state.counts[sku] || 0) + 1,
+                },
+            };
+
+        case 'REMOVE_ONE':
+            return {
+                ...state,
+                totalQuantity: state.totalQuantity - 1,
+                subtotal: state.subtotal - price,
+                counts: {
+                    ...state.counts,
+                    [sku]: (state.counts[sku] || 0) - 1,
+                },
             };
 
         default:
@@ -70,7 +93,8 @@ export default function ProductTable({ vars }) {
 
     const emptyCart = {
         totalQuantity: 0,
-        totalCost: 0.0,
+        subtotal: 0,
+        counts: [],
     };
     const [cart, dispatchCart] = React.useReducer(cartReducer, emptyCart);
 
@@ -81,7 +105,7 @@ export default function ProductTable({ vars }) {
                 <dt>Items</dt>
                 <dd>{cart.totalQuantity}</dd>
                 <dt>Total</dt>
-                <dd>{cart.totalCost}</dd>
+                <dd>{currencyFormatter.format(cart.subtotal)}</dd>
             </dl>
         </div>
     );
@@ -107,14 +131,17 @@ export default function ProductTable({ vars }) {
     };
 
     const ProductRow = ({ product }) => {
-        const buttonRef = React.useRef(null);
-
-        const [count, updateCount] = React.useState(0);
+        const { sku } = product;
 
         const addToCart = () => {
-            updateCount(count + 1);
-            dispatchCart({ type: 'ADD_ONE', sku: product.sku });
+            dispatchCart({ type: 'ADD_ONE', product });
         };
+
+        const removeFromCart = () => {
+            dispatchCart({ type: 'REMOVE_ONE', product });
+        };
+
+        const count = cart.counts[sku] || 0;
 
         return (
             <div className="product" key={product.sku}>
@@ -124,9 +151,10 @@ export default function ProductTable({ vars }) {
                     <span>$</span>
                     {product.price}
                 </div>
-                <button ref={buttonRef} type="button" onClick={addToCart}>
+                <button type="button" onClick={addToCart}>
                     {`Add to Cart (${count})`}
                 </button>
+                {count ? <button type="button" onClick={removeFromCart}>Remove One</button> : ''}
             </div>
         );
     };
