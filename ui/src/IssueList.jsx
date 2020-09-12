@@ -1,6 +1,7 @@
 import React from 'react';
 import URLSearchParams from '@ungap/url-search-params';
 import { Route } from 'react-router-dom';
+import Badge from '@material-ui/core/Badge';
 
 import IssueFilter from './IssueFilter.jsx';
 import IssueTable from './IssueTable.jsx';
@@ -48,7 +49,7 @@ export default function IssueList(props) {
 
     return (
         <>
-            <h1>Issue Tracker</h1>
+            <h1><Badge badgeContent="Mern!" color="primary">Issue Tracker</Badge></h1>
             <IssueFilter />
             <IssueTable vars={vars} />
             {/* If the URL matches path, render this component */}

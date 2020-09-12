@@ -17,6 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@ungap/url-search-params": "^0.2.2",
     "babel-polyfill": "^6.26.0",
     "dotenv": "^8.2.0",
