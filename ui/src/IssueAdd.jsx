@@ -1,4 +1,6 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 import graphQlFetch from './graphQlFetch.js';
 
@@ -35,9 +37,9 @@ export default function IssueAdd(props) {
 
     return (
         <form ref={formRef} onSubmit={handleSubmit}>
-            <input type="text" name="owner" placeholder="Owner" />
-            <input type="text" name="title" placeholder="Title" />
-            <button type="submit">Add</button>
+            <TextField name="owner" label="Owner" variant="outlined" required fullWidth margin="normal" />
+            <TextField name="title" label="Title" variant="outlined" required fullWidth margin="normal" />
+            <Button type="submit" variant="contained" color="primary" fullWidth margin="normal">Add</Button>
         </form>
     );
 }

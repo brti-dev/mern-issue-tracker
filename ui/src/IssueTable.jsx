@@ -1,16 +1,19 @@
 import Collapse from '@material-ui/core/Collapse';
-import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Fab from '@material-ui/core/Fab';
+
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
+import AddIcon from '@material-ui/icons/Add';
 import { makeStyles } from '@material-ui/core/styles';
 
 import React from 'react';
@@ -26,6 +29,21 @@ const useRowStyles = makeStyles({
         },
     },
 });
+const useAddformStyles = makeStyles((theme) => ({
+    fab: {
+        position: 'absolute',
+        bottom: theme.spacing(2),
+        right: theme.spacing(2),
+    },
+    paper: {
+        position: 'absolute',
+        // width: 400,
+        top: 50,
+        left: 50,
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(2, 4, 3),
+    },
+}));
 
 async function fetchIssues(vars = {}) {
     console.log('fetchIssues', vars);
@@ -160,14 +178,16 @@ export default function IssueTable({ vars }) {
 
     const history = useHistory();
     const location = useLocation();
+    const classes = useAddformStyles();
 
     const [issues, dispatchIssues] = React.useReducer(issuesReducer, { data: [] });
-    console.log('State: issues', issues);
+    const [openAdd, setOpenAdd] = React.useState(false);
 
     const handleFetchIssues = React.useCallback(() => {
         fetchIssues(vars).then((result) => {
             dispatchIssues({ type: 'FETCH_SUCCESS', payload: result });
         });
+        setOpenAdd(false);
     }, [vars]);
 
     React.useEffect(() => {
@@ -240,7 +260,14 @@ export default function IssueTable({ vars }) {
                     {issueRows}
                 </TableBody>
             </Table>
-            <IssueAdd onAdd={handleFetchIssues} />
+            <Modal open={openAdd} onClose={() => setOpenAdd(false)}>
+                <div className={classes.paper}>
+                    <IssueAdd onAdd={handleFetchIssues} />
+                </div>
+            </Modal>
+            <Fab color="secondary" aria-label="add issue" className={classes.fab} onClick={() => setOpenAdd(true)}>
+                <AddIcon />
+            </Fab>
         </>
     );
 }
