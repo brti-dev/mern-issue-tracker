@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Snackbar } from '@material-ui/core';
 
 import graphQlFetch from './graphQlFetch.js';
 import NumberInput from './NumberInput.jsx';
@@ -86,8 +87,8 @@ function reducer(state, action) {
 
 export default function IssueEdit({ match }) {
     const id = Number(match.params.id);
-
     const [issue, dispatchIssue] = React.useReducer(reducer, initialState);
+    const [openAlert, setOpenAlert] = React.useState(false);
 
     React.useEffect(() => {
         dispatchIssue({ type: 'INIT' });
@@ -122,7 +123,7 @@ export default function IssueEdit({ match }) {
         if (result) {
             console.log('mutation result', result);
             dispatchIssue({ type: 'FETCH_SUCCESS', payload: result.issueUpdate });
-            alert('Updated issue');
+            setOpenAlert(true);
         }
     };
 
@@ -215,12 +216,9 @@ export default function IssueEdit({ match }) {
                             </tr>
                         </tbody>
                     </table>
-                    <Link to={`/edit/${id - 1}`}>Prev</Link>
-                    {' | '}
-                    <Link to={`/edit/${id + 1}`}>Next</Link>
-                    <p>{JSON.stringify(issue.data)}</p>
                 </form>
             )}
+            <Snackbar open={openAlert} autoHideDuration={6000} message="Issue updated" onClose={() => setOpenAlert(false)} />
         </div>
     );
 }
