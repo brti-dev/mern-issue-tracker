@@ -1,3 +1,8 @@
+/**
+ * Component to edit an issue. Loads data from API into a form, then handles form submission by
+ * sending changes to API.
+ */
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 
