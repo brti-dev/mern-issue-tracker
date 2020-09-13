@@ -31,7 +31,7 @@ const useRowStyles = makeStyles({
 });
 const useAddformStyles = makeStyles((theme) => ({
     fab: {
-        position: 'absolute',
+        position: 'fixed',
         bottom: theme.spacing(2),
         right: theme.spacing(2),
     },
@@ -236,7 +236,7 @@ export default function IssueTable({ vars }) {
         <IssueRow key={issue.id} issue={issue} closeIssue={closeIssue} deleteIssue={deleteIssue} />
     ));
 
-    if (issues.isFailure) {
+    if (issues.isError) {
         return <p>Something went wrong.</p>;
     }
 
@@ -262,7 +262,7 @@ export default function IssueTable({ vars }) {
             </Table>
             <Modal open={openAdd} onClose={() => setOpenAdd(false)}>
                 <div className={classes.paper}>
-                    <IssueAdd onAdd={handleFetchIssues} />
+                    <IssueAdd />
                 </div>
             </Modal>
             <Fab color="secondary" aria-label="add issue" className={classes.fab} onClick={() => setOpenAdd(true)}>

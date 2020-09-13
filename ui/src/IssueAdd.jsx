@@ -1,17 +1,25 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton';
+import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
 
 import graphQlFetch from './graphQlFetch.js';
 
 export default function IssueAdd(props) {
     console.log('<IssueAdd>', props);
 
-    const { onAdd } = props;
-
+    const history = useHistory();
     const formRef = React.useRef();
+    const [openError, setOpenError] = React.useState({ show: false, message: 'I am error.' });
 
-    const handleSubmit = (e) => {
+    const showError = (message) => {
+        setOpenError({ show: true, message });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const form = formRef.current;
@@ -29,17 +37,27 @@ export default function IssueAdd(props) {
             }
         }`;
 
-        graphQlFetch(query, { issue }).then((result) => {
-            console.log('mutation issueAdd response', result);
-            onAdd();
-        });
+        const result = await graphQlFetch(query, { issue }, showError);
+        console.log('mutation issueAdd response', result);
+
+        if (result) {
+            history.push(`/edit/${result.issueAdd.id}`);
+        }
     };
 
     return (
-        <form ref={formRef} onSubmit={handleSubmit}>
-            <TextField name="owner" label="Owner" variant="outlined" required fullWidth margin="normal" />
-            <TextField name="title" label="Title" variant="outlined" required fullWidth margin="normal" />
-            <Button type="submit" variant="contained" color="primary" fullWidth margin="normal">Add</Button>
-        </form>
+        <>
+            <form ref={formRef} onSubmit={handleSubmit}>
+                <TextField name="owner" label="Owner" variant="outlined" required fullWidth margin="normal" />
+                <TextField name="title" label="Title" variant="outlined" required fullWidth margin="normal" />
+                <Button type="submit" variant="contained" color="primary" fullWidth margin="normal">Add</Button>
+            </form>
+            <Snackbar
+                open={openError.show}
+                autoHideDuration={6000}
+                onClose={() => setOpenError({ show: false })}
+                message={openError.message}
+            />
+        </>
     );
 }
