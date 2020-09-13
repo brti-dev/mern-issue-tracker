@@ -6,15 +6,19 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 // Material UI Baseline ("normalize")
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/core/styles';
 
 import Page from './Page.jsx';
+import theme from './theme.js';
 
 const element = (
     <>
         <CssBaseline />
-        <Router>
-            <Page />
-        </Router>
+        <ThemeProvider theme={theme}>
+            <Router>
+                <Page />
+            </Router>
+        </ThemeProvider>
     </>
 );
 
