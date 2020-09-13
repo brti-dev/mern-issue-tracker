@@ -1,8 +1,31 @@
+import Collapse from '@material-ui/core/Collapse';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
+import { makeStyles } from '@material-ui/core/styles';
+
 import React from 'react';
 import { Link, NavLink, withRouter, useHistory, useLocation } from 'react-router-dom';
 
 import graphQlFetch from './graphQlFetch.js';
 import IssueAdd from './IssueAdd.jsx';
+
+const useRowStyles = makeStyles({
+    root: {
+        '& > *': {
+            borderBottom: 'unset',
+        },
+    },
+});
 
 async function fetchIssues(vars = {}) {
     console.log('fetchIssues', vars);
@@ -17,7 +40,7 @@ async function fetchIssues(vars = {}) {
             effortMin: $effortMin,
             effortMax: $effortMax
         ) {
-            id title status owner created effort due
+            id title status owner created effort due description
         }
     }`;
     const result = await graphQlFetch(query, vars);
@@ -70,38 +93,64 @@ function issuesReducer(state, action) {
     }
 }
 
-const IssueRow = withRouter((props) => {
+const IssueRow = (props) => {
     console.log('<IssueRow>', props);
 
     const {
         issue,
-        location: { search },
         closeIssue,
         deleteIssue,
     } = props;
+    const history = useHistory();
+    const classes = useRowStyles();
 
-    const selectLocation = { pathname: `/issues/${issue.id}`, search };
+    const [open, setOpen] = React.useState(false);
 
     return (
-        <tr>
-            <td>{issue.id}</td>
-            <td>{issue.status}</td>
-            <td>{issue.owner}</td>
-            <td>{issue.created.toDateString()}</td>
-            <td>{issue.effort}</td>
-            <td>{issue.due && issue.due.toDateString()}</td>
-            <td>{issue.title}</td>
-            <td>
-                <Link to={`/edit/${issue.id}`}>Edit</Link>
-                <span>|</span>
-                <NavLink to={selectLocation}>Select</NavLink>
-                <span>|</span>
-                <button type="button" disabled={issue.status === 'Closed'} onClick={() => { closeIssue(issue.id); }}>Close</button>
-                <button type="button" onClick={() => { deleteIssue(issue.id); }}>Delete</button>
-            </td>
-        </tr>
+        <>
+            <TableRow className={classes.root}>
+                <TableCell>
+                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </TableCell>
+                <TableCell>{issue.id}</TableCell>
+                <TableCell>{issue.status}</TableCell>
+                <TableCell>{issue.owner}</TableCell>
+                <TableCell>{issue.created.toDateString()}</TableCell>
+                <TableCell>{issue.effort}</TableCell>
+                <TableCell>{issue.due && issue.due.toDateString()}</TableCell>
+                <TableCell>{issue.title}</TableCell>
+                <TableCell>
+                    <IconButton aria-label="Edit issue" onClick={() => history.push(`/edit/${issue.id}`)}>
+                        <EditIcon />
+                    </IconButton>
+                    <IconButton aria-label="Close issue" disabled={issue.status === 'Closed'} onClick={() => { closeIssue(issue.id); }}>
+                        <CloseIcon />
+                    </IconButton>
+                    <IconButton aria-label="Delete" onClick={() => { deleteIssue(issue.id); }}>
+                        <DeleteIcon />
+                    </IconButton>
+                </TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell colSpan={9} style={{ paddingTop: 0, paddingBottom: 0 }}>
+                    <Collapse in={open}>
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell style={{ border: 0, whiteSpace: 'pre', paddingTop: 0 }}>
+                                        {issue.description || 'No description'}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </>
     );
-});
+};
 
 /**
  * @param {Object} vars Filters passed by parent Component `IssueList`
@@ -173,23 +222,24 @@ export default function IssueTable({ vars }) {
 
     return (
         <>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Status</th>
-                        <th>Owner</th>
-                        <th>Created</th>
-                        <th>Effort</th>
-                        <th>Due Date</th>
-                        <th>Title</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <Table arial-label="collapsible table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell />
+                        <TableCell>ID</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Owner</TableCell>
+                        <TableCell>Created</TableCell>
+                        <TableCell>Effort</TableCell>
+                        <TableCell>Due Date</TableCell>
+                        <TableCell>Title</TableCell>
+                        <TableCell>Action</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {issueRows}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
             <IssueAdd onAdd={handleFetchIssues} />
         </>
     );
