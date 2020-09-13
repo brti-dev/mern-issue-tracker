@@ -21,6 +21,8 @@ import { Link, NavLink, withRouter, useHistory, useLocation } from 'react-router
 
 import graphQlFetch from './graphQlFetch.js';
 import IssueAdd from './IssueAdd.jsx';
+import Tooltip from '@material-ui/core/Tooltip'
+
 
 const useRowStyles = makeStyles({
     root: {
@@ -140,15 +142,21 @@ const IssueRow = (props) => {
                 <TableCell>{issue.due && issue.due.toDateString()}</TableCell>
                 <TableCell>{issue.title}</TableCell>
                 <TableCell>
-                    <IconButton aria-label="Edit issue" onClick={() => history.push(`/edit/${issue.id}`)}>
-                        <EditIcon />
-                    </IconButton>
-                    <IconButton aria-label="Close issue" disabled={issue.status === 'Closed'} onClick={() => { closeIssue(issue.id); }}>
-                        <CloseIcon />
-                    </IconButton>
-                    <IconButton aria-label="Delete" onClick={() => { deleteIssue(issue.id); }}>
-                        <DeleteIcon />
-                    </IconButton>
+                    <Tooltip title="Edit" placement="left">
+                        <IconButton aria-label="Edit issue" onClick={() => history.push(`/edit/${issue.id}`)}>
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Close" placement="left">
+                        <IconButton aria-label="Close issue" disabled={issue.status === 'Closed'} onClick={() => { closeIssue(issue.id); }}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete" placement="left">
+                        <IconButton aria-label="Delete" onClick={() => { deleteIssue(issue.id); }}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
                 </TableCell>
             </TableRow>
             <TableRow>
@@ -265,9 +273,12 @@ export default function IssueTable({ vars }) {
                     <IssueAdd />
                 </div>
             </Modal>
-            <Fab color="secondary" aria-label="add issue" className={classes.fab} onClick={() => setOpenAdd(true)}>
-                <AddIcon />
-            </Fab>
+            <Tooltip title="New Issue">
+                <Fab color="secondary" aria-label="add issue" className={classes.fab} onClick={() => setOpenAdd(true)}>
+                    <AddIcon />
+                </Fab>
+            </Tooltip>
+
         </>
     );
 }
