@@ -7,22 +7,18 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Fab from '@material-ui/core/Fab';
-
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
+import Tooltip from '@material-ui/core/Tooltip'
 import { makeStyles } from '@material-ui/core/styles';
-
 import React from 'react';
-import { Link, NavLink, withRouter, useHistory, useLocation } from 'react-router-dom';
-
+import { useHistory, useLocation } from 'react-router-dom';
 import graphQlFetch from './graphQlFetch.js';
 import IssueAdd from './IssueAdd.jsx';
-import Tooltip from '@material-ui/core/Tooltip'
-
 
 const useRowStyles = makeStyles({
     root: {
