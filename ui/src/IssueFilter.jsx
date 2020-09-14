@@ -13,6 +13,7 @@ import { makeStyles, Slider, Typography } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
     root: {
         margin: theme.spacing(3),
+        maxWidth: 500,
     },
     form: {
         '& > *': {
