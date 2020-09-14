@@ -1,4 +1,5 @@
 import React from 'react';
+import TextField from '@material-ui/core/TextField';
 
 function displayFormat(date) {
     return (date != null) ? date.toDateString() : '';
@@ -61,7 +62,7 @@ export default function DateInput({
     const placeholder = state.isFocused ? 'yyyy-mm-dd' : null;
 
     return (
-        <input
+        <TextField
             {...fieldProps}
             type="text"
             placeholder={placeholder}

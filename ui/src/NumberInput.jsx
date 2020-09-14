@@ -1,4 +1,5 @@
 import React from 'react';
+import TextField from '@material-ui/core/TextField';
 
 function format(number) {
     return number != null ? number.toString() : '';
@@ -26,6 +27,6 @@ export default function NumberInput(props) {
     };
 
     return (
-        <input type="text" {...props} value={state.value} onBlur={handleBlur} onChange={handleChange} />
+        <TextField {...props} value={state.value} onBlur={handleBlur} onChange={handleChange} />
     );
 }

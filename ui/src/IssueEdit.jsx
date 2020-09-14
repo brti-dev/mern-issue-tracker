@@ -4,13 +4,33 @@
  */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Snackbar } from '@material-ui/core';
+import { MenuItem, Snackbar, Select, Button } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 import graphQlFetch from './graphQlFetch.js';
 import NumberInput from './NumberInput.jsx';
 import DateInput from './DateInput.jsx';
 import TextInput from './TextInput.jsx';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        margin: theme.spacing(3),
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        margin: '0 auto',
+        maxWidth: 300,
+        '& > *': {
+            marginTop: theme.spacing(2),
+        },
+    },
+    textField: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        width: '25ch',
+    },
+}));
 
 async function loadData(id) {
     const query = `query issue($id: Int!) {
@@ -86,6 +106,7 @@ function reducer(state, action) {
 }
 
 export default function IssueEdit({ match }) {
+    const classes = useStyles();
     const id = Number(match.params.id);
     const [issue, dispatchIssue] = React.useReducer(reducer, initialState);
     const [openAlert, setOpenAlert] = React.useState(false);
@@ -154,68 +175,32 @@ export default function IssueEdit({ match }) {
     };
 
     return (
-        <div>
-            <h2>{`Edit Issue #[${id}]`}</h2>
+        <div className={classes.root}>
+            <h2>{`Edit Issue #${id}`}</h2>
 
             {issue.isError && <p>Something went wrong.</p>}
 
             {issue.isLoading && <p>Loading</p>}
 
             {!issue.isError && !issue.isLoading && (
-                <form onSubmit={handleSubmit}>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>Created:</td>
-                                <td>{issue.data.created ? issue.data.created.toDateString() : ''}</td>
-                            </tr>
-                            <tr>
-                                <td>Status:</td>
-                                <td>
-                                    <select name="status" value={issue.data.status} onChange={handleChange}>
-                                        <option value="New">New</option>
-                                        <option value="Assigned">Assigned</option>
-                                        <option value="Fixed">Fixed</option>
-                                        <option value="Closed">Closed</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Owner:</td>
-                                <td>
-                                    <TextInput key={id} name="owner" value={issue.data.owner} onChange={handleChange} />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Effort:</td>
-                                <td>
-                                    <NumberInput key={id} name="effort" value={issue.data.effort} onChange={handleChange} />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Due:</td>
-                                <td>
-                                    <DateInput key={id} name="due" value={issue.data.due} onChange={handleChange} onValidityChange={handleValidityChange} />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Title:</td>
-                                <td>
-                                    <TextInput key={id} name="title" value={issue.data.title} onChange={handleChange} />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Description:</td>
-                                <td>
-                                    <TextInput key={id} tag="textarea" name="description" value={issue.data.description} onChange={handleChange} />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td />
-                                <td><button type="submit">Submit</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <form onSubmit={handleSubmit} className={classes.form}>
+                    <div>
+                        Created: {issue.data.created ? issue.data.created.toDateString() : ''}
+                    </div>
+                    <Select name="status" value={issue.data.status} onChange={handleChange}>
+                        <MenuItem value="New">New</MenuItem>
+                        <MenuItem value="Assigned">Assigned</MenuItem>
+                        <MenuItem value="Fixed">Fixed</MenuItem>
+                        <MenuItem value="Closed">Closed</MenuItem>
+                    </Select>
+                    <TextInput key={id} name="owner" value={issue.data.owner} label="Owner" onChange={handleChange} />
+                    <NumberInput key={id} name="effort" value={issue.data.effort} label="Effort" onChange={handleChange} />
+                    <DateInput key={id} name="due" value={issue.data.due} label="Due" onChange={handleChange} onValidityChange={handleValidityChange} />
+                    <TextInput key={id} name="title" value={issue.data.title} label="Title" onChange={handleChange} />
+                    <TextInput key={id} tag="textarea" name="description" value={issue.data.description} label="Description" onChange={handleChange} />
+                    <Button type="submit" variant="contained" color="primary">
+                        Submit
+                    </Button>
                 </form>
             )}
             <Snackbar open={openAlert} autoHideDuration={6000} message="Issue updated" onClose={() => setOpenAlert(false)} />
