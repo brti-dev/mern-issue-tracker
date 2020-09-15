@@ -8,8 +8,8 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
 
-import Page from './Page.jsx';
-import theme from './theme.js';
+import Page from '../src/Page.jsx';
+import theme from '../src/theme.js';
 
 const element = (
     <>

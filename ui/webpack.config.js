@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     mode: 'development',
     // entry: { app: './src/App.jsx' }, // Non-HMR
-    entry: { app: ['./src/App.jsx'] }, // Hot Module Replacement
+    entry: { app: ['./browser/App.jsx'] }, // Hot Module Replacement
     output: {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'public'),

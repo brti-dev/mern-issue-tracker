@@ -1,13 +1,13 @@
 {
-    "extends": "airbnb",
     "env": {
-        "browser": true
+        "browser": true,
+        "node": true
     },
     "rules": {
         "react/prop-types": "off",
         "no-console": "off",
         "indent": ["error", 4, {"SwitchCase": 1}],
         "react/jsx-indent": ["error",4],
-        "import/extensions": [ "error", "always", { "ignorePackages": true } ], // Exception for including extensions in application modules
+        "import/extensions": [ "error", "always", { "ignorePackages": true } ] // Exception for including extensions in application modules
     }
 }
