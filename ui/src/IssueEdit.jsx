@@ -4,7 +4,10 @@
  */
 
 import React from 'react';
-import { MenuItem, Snackbar, Select, Button } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
+import Snackbar from '@material-ui/core/Snackbar';
+import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 import graphQlFetch from './graphQlFetch.js';
@@ -158,7 +161,8 @@ export default function IssueEdit({ match }) {
     const handleChange = (event, naturalValue = null) => {
         console.log('handleChange', event.target, naturalValue);
         const { name, value: textValue } = event.target;
-        const value = naturalValue || textValue;
+        // String check fixes additional arguments passed by Select component
+        const value = (naturalValue && typeof naturalValue === 'string') || textValue;
 
         dispatchIssue({ type: 'UPDATE_FIELD', name, value });
     };
@@ -185,7 +189,9 @@ export default function IssueEdit({ match }) {
             {!issue.isError && !issue.isLoading && (
                 <form onSubmit={handleSubmit} className={classes.form}>
                     <div>
-                        Created: {issue.data.created ? issue.data.created.toDateString() : ''}
+                        Created:
+                        {' '}
+                        {issue.data.created ? issue.data.created.toDateString() : ''}
                     </div>
                     <Select name="status" value={issue.data.status} onChange={handleChange}>
                         <MenuItem value="New">New</MenuItem>
