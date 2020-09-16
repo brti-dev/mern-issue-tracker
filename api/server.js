@@ -6,7 +6,7 @@ const { installHandler } = require('./api_handler');
 const app = express();
 installHandler(app);
 
-const port = process.env.API_SERVER_PORT || 3000;
+const port = process.env.PORT || 3000;
 
 // Start the server and wait for requests
 (async function start() {

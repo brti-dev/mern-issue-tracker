@@ -4,12 +4,8 @@
 * localhost:
 * mongo issuetracker scripts/initmongo.js
 * Atlas:
-* mongo <db_url> scripts/init.mongo.js
-* MLab:
-* mongo mongodb://user:pwd@xxx.mlab.com:33533/issuetracker scripts/init.mongo.js
+* mongo $DB_URL scripts/initmongo.js
 */
-
-const db = require("../db");
 
 /* global db print */
 /* eslint no-restricted-globals: "off" */
@@ -36,7 +32,7 @@ const issuesDB = [
     }, {
         id: 2,
         status: 'Assigned',
-        owner: 'Eddie',
+        owner: 'Gustavo Almodovar',
         effort: 14,
         created: new Date('2019-01-16'),
         due: new Date('2019-02-01'),
