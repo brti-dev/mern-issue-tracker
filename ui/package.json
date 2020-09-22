@@ -4,6 +4,10 @@
   "description": "Pro Mern Stack ver 2 -UI",
   "private": true,
   "main": "uiserver.js",
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x"
+  },
   "scripts": {
     "#start": "UI server. HMR is enabled in dev mode.",
     "start": "nodemon -w server -w .env server/uiserver.js",
@@ -12,7 +16,8 @@
     "#compile": "Generates JS bundles for production. Use with start.",
     "compile": "webpack --mode production",
     "#watch": "Compile, and recompile on any changes.",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "heroku-postbuild": "npm run compile"
   },
   "author": "",
   "license": "ISC",
