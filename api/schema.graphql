@@ -1,86 +1,99 @@
 scalar GraphQLDate
 
 enum StatusType {
-    New
-    Assigned
-    Fixed
-    Closed
+	New
+	Assigned
+	Fixed
+	Closed
 }
 
 type Issue {
-    _id: ID!
-    id: Int!
-    title: String!
-    status: StatusType!
-    owner: String
-    effort: Int
-    created: GraphQLDate!
-    due: GraphQLDate
-    description: String
+	_id: ID!
+	id: Int!
+	title: String!
+	status: StatusType!
+	owner: String
+	effort: Int
+	created: GraphQLDate!
+	due: GraphQLDate
+	description: String
 }
 
 input IssueInputs {
-    title: String!
-    "Optional, defaults to 'New'"
-    status: StatusType = New
-    owner: String
-    effort: Int
-    due: GraphQLDate
-    description: String
+	title: String!
+	"Optional, defaults to 'New'"
+	status: StatusType = New
+	owner: String
+	effort: Int
+	due: GraphQLDate
+	description: String
 }
 
 """Inputs for issueUpdate: all are optional. Whichever is specified will be set to the given value, undefined fields will remain unmodified."""
 input IssueUpdateInputs {
-    title: String
-    status: StatusType
-    owner: String
-    effort: Int
-    due: GraphQLDate
-    description: String
+	title: String
+	status: StatusType
+	owner: String
+	effort: Int
+	due: GraphQLDate
+	description: String
 }
 
 type Product {
-    _id: ID!
-    sku: Int!
-    title: String!
-    description: String
-    picture: Boolean!
-    price: Float!
-    cost: Float
-    inventory: Int!
-    created: GraphQLDate!
+	_id: ID!
+	sku: Int!
+	title: String!
+	description: String
+	picture: Boolean!
+	price: Float!
+	cost: Float
+	inventory: Int!
+	created: GraphQLDate!
 }
 
 input ProductInputs {
-    "Optional, generated automatically if none given"
-    sku: Int
-    title: String!
-    description: String
-    "Optional, defaults to false"
-    Picture: Boolean
-    Price: Float!
-    "Optional, for management use only"
-    Cost: Float
-    Inventory: Int!
+	"Optional, generated automatically if none given"
+	sku: Int
+	title: String!
+	description: String
+	"Optional, defaults to false"
+	Picture: Boolean
+	Price: Float!
+	"Optional, for management use only"
+	Cost: Float
+	Inventory: Int!
+}
+
+type IssueCounts {
+	owner: String!
+	New: Int
+	Assigned: Int
+	Fixed: Int
+	Closed: Int
 }
 
 # Top level declarations
 
 type Query {
-    about: String!
-    issueList(
+	about: String!
+	issueList(
         status: StatusType
         effortMin: Int
         effortMax: Int
-    ): [Issue!]!
-    issue(id: Int!): Issue!
-    productList: [Product!]!
+	): [Issue!]!
+	issue(id: Int!): Issue!
+	productList: [Product!]!
+	issueCounts(
+        status: StatusType
+        effortMin: Int
+        effortMax: Int
+	): [IssueCounts!]!
 }
 
 type Mutation {
-    setAboutMessage(message: String!): String
-    issueAdd(issue: IssueInputs!): Issue!
-    issueUpdate(id: Int!, changes: IssueUpdateInputs!): Issue!
-    issueDelete(id: Int!): Boolean!
-    productAdd(product: ProductInputs!): Product!
+	setAboutMessage(message: String!): String
+	issueAdd(issue: IssueInputs!): Issue!
+	issueUpdate(id: Int!, changes: IssueUpdateInputs!): Issue!
+	issueDelete(id: Int!): Boolean!
+	productAdd(product: ProductInputs!): Product!
 }
