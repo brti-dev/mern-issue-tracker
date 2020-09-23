@@ -3,6 +3,8 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware'); // Not implemented
 const path = require('path');
 
+const render = require('./render.js');
+
 const app = express();
 
 // Hot Module Replacement
@@ -39,6 +41,8 @@ const env = { UI_API_ENDPOINT };
 app.get('/env.js', (req, res) => {
     res.send(`window.ENV = ${JSON.stringify(env)}`);
 });
+
+app.get('/about', render);
 
 // Respond with index.html for all requests
 app.get('*', (req, res) => {

@@ -61,11 +61,8 @@ function NavBar() {
                     <Tabs value={value} onChange={handleChange}>
                         <Tab label="Issue List" component={Link} to="/issues" />
                         <Tab label="Report" component={Link} to="/report" />
+                        <Tab label="About" component={Link} to="/about" />
                     </Tabs>
-                    {/* <Typography>
-                        <NavLink to="/issues">Issue List</NavLink>{' '}
-                        <NavLink to="/report">Report</NavLink>
-                    </Typography> */}
                 </Toolbar>
             </AppBar>
         </div>
