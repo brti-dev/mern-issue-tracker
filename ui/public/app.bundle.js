@@ -1515,7 +1515,7 @@ function _fetchIssues() {
           case 0:
             vars = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : {};
             console.log('fetchIssues', vars);
-            query = "query issueList(\n        $status: StatusType\n        $effortMin: Int\n        $effortMax: Int\n    ) {\n        issueList(\n            status: $status\n            effortMin: $effortMin,\n            effortMax: $effortMax\n        ) {\n            id title status owner created effort due description\n        }\n    }";
+            query = "query issueList(\n        $status: StatusType\n        $effortMin: Int\n        $effortMax: Int\n    ) {\n        issueList(\n            status: $status\n            effortMin: $effortMin,\n            effortMax: $effortMax\n        ) {\n            issues {\n                id title status owner created effort due description\n            }\n        }\n    }";
             _context3.next = 5;
             return Object(_graphQlFetch_js__WEBPACK_IMPORTED_MODULE_19__["default"])(query, vars);
 
@@ -1528,7 +1528,7 @@ function _fetchIssues() {
               break;
             }
 
-            return _context3.abrupt("return", result.issueList);
+            return _context3.abrupt("return", result.issueList.issues);
 
           case 9:
             return _context3.abrupt("return", {});

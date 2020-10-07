@@ -2,6 +2,8 @@ const { UserInputError } = require('apollo-server-express');
 
 const { getDb, getNextSequence } = require('./db');
 
+const PAGE_SIZE = 10;
+
 /**
  * GraphQL resolver functions
  * Queries MongoDB
@@ -21,7 +23,7 @@ const { getDb, getNextSequence } = require('./db');
 async function list(_, args) {
     // arg `status` passed by qs via React Router (`Contents` component)
     // /#/issues?status=New
-    const { status, effortMin, effortMax } = args;
+    const { status, effortMin, effortMax, page } = args;
     const filter = {};
     if (status) {
         filter.status = status;
@@ -38,9 +40,17 @@ async function list(_, args) {
         }
     }
 
-    const issues = await getDb().collection('issues').find(filter).toArray();
+    // const issues = await getDb().collection('issues').find(filter).toArray();
+    const cursor = getDb()
+        .collection('issues')
+        .find(filter)
+        .sort({ id: 1 })
+        .skip(PAGE_SIZE * (page - 1))
+        .limit(PAGE_SIZE);
+    const totalCount = await cursor.count(false); const issues = cursor.toArray();
+    const pages = Math.ceil(totalCount / PAGE_SIZE);
 
-    return issues;
+    return { issues, pages };
 }
 
 function validate(issue) {

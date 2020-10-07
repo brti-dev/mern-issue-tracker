@@ -56,14 +56,16 @@ async function fetchIssues(vars = {}) {
             effortMin: $effortMin,
             effortMax: $effortMax
         ) {
-            id title status owner created effort due description
+            issues {
+                id title status owner created effort due description
+            }
         }
     }`;
     const result = await graphQlFetch(query, vars);
     console.log('fetchIssues result:', result);
 
     if (result) {
-        return result.issueList;
+        return result.issueList.issues;
     }
 
     return {};
