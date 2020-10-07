@@ -48,7 +48,7 @@ export default function IssueList(props) {
 
     return (
         <>
-            <IssueFilter />
+            <IssueFilter urlBase="/issues" />
             <IssueTable vars={vars} />
             {/* If the URL matches path, render this component (depreciated) */}
             <Route path={`${path}/:id`} component={IssueDetail} />

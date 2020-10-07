@@ -110,8 +110,6 @@ function issuesReducer(state, action) {
 }
 
 const IssueRow = (props) => {
-    console.log('<IssueRow>', props);
-
     const {
         issue,
         closeIssue,

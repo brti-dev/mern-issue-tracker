@@ -1059,10 +1059,11 @@ var useStyles = Object(_material_ui_core__WEBPACK_IMPORTED_MODULE_10__["makeStyl
  */
 
 var IssueFilter = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["withRouter"])(function (props) {
-  console.log('IssueFilter compontent', props);
+  console.log('<IssueFilter />', props);
   var classes = useStyles(); // Read location qs to determine selectform value
 
   var history = props.history,
+      urlBase = props.urlBase,
       search = props.location.search;
   var queryParams = new _ungap_url_search_params__WEBPACK_IMPORTED_MODULE_1__["default"](search);
   var initialState = {
@@ -1083,7 +1084,7 @@ var IssueFilter = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["withRout
     if (state.effortMin) newQuery.set('effortMin', state.effortMin);
     if (state.effortMax) newQuery.set('effortMax', state.effortMax);
     history.push({
-      pathname: '/issues/',
+      pathname: urlBase,
       search: newQuery.toString()
     });
   }, [state]); // On form change, update state
@@ -1237,7 +1238,9 @@ function IssueList(props) {
   var _props$match = props.match,
       path = _props$match.path,
       url = _props$match.url;
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_IssueFilter_jsx__WEBPACK_IMPORTED_MODULE_3__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_IssueTable_jsx__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_IssueFilter_jsx__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    urlBase: "/issues"
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_IssueTable_jsx__WEBPACK_IMPORTED_MODULE_4__["default"], {
     vars: vars
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
     path: "".concat(path, "/:id"),
@@ -1259,9 +1262,133 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return IssueReport; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _material_ui_core_Table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @material-ui/core/Table */ "./node_modules/@material-ui/core/esm/Table/index.js");
+/* harmony import */ var _material_ui_core_TableBody__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @material-ui/core/TableBody */ "./node_modules/@material-ui/core/esm/TableBody/index.js");
+/* harmony import */ var _material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @material-ui/core/TableCell */ "./node_modules/@material-ui/core/esm/TableCell/index.js");
+/* harmony import */ var _material_ui_core_TableHead__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @material-ui/core/TableHead */ "./node_modules/@material-ui/core/esm/TableHead/index.js");
+/* harmony import */ var _material_ui_core_TableRow__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @material-ui/core/TableRow */ "./node_modules/@material-ui/core/esm/TableRow/index.js");
+/* harmony import */ var _IssueFilter_jsx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./IssueFilter.jsx */ "./src/IssueFilter.jsx");
+/* harmony import */ var _graphQlFetch_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./graphQlFetch.js */ "./src/graphQlFetch.js");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function IssueReport() {
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "This is a placeholder for the Issue Report"));
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+
+
+
+
+
+
+var STATUSES = ['New', 'Assigned', 'Fixed', 'Closed'];
+
+function fetchData(_x, _x2, _x3) {
+  return _fetchData.apply(this, arguments);
+}
+
+function _fetchData() {
+  _fetchData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(match, search, showError) {
+    var params, vars, effortMin, effortMax, query, data;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            params = new URLSearchParams(search);
+            vars = {};
+
+            if (params.get('status')) {
+              vars.status = params.get('status');
+            }
+
+            effortMin = parseInt(params.get('effortMin'), 10);
+
+            if (!Number.isNaN(effortMin)) {
+              vars.effortMin = effortMin;
+            }
+
+            effortMax = parseInt(params.get('effortMax'), 10);
+
+            if (!Number.isNaN(effortMax)) {
+              vars.effortMax = effortMax;
+            }
+
+            query = "query issueList(\n        $status: StatusType\n        $effortMin: Int\n        $effortMax: Int\n    ) {\n        issueCounts(\n            status: $status\n            effortMin: $effortMin\n            effortMax: $effortMax\n        ){ owner New Assigned Fixed Closed }\n    }";
+            _context.next = 10;
+            return Object(_graphQlFetch_js__WEBPACK_IMPORTED_MODULE_7__["default"])(query, vars, showError);
+
+          case 10:
+            data = _context.sent;
+            return _context.abrupt("return", data);
+
+          case 12:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _fetchData.apply(this, arguments);
+}
+
+function IssueReport(props) {
+  var search = props.location.search,
+      match = props.match,
+      showError = props.showError;
+
+  var _React$useState = react__WEBPACK_IMPORTED_MODULE_0___default.a.useState({
+    stats: []
+  }),
+      _React$useState2 = _slicedToArray(_React$useState, 2),
+      state = _React$useState2[0],
+      setState = _React$useState2[1];
+
+  var handleFetchReport = react__WEBPACK_IMPORTED_MODULE_0___default.a.useCallback(function () {
+    fetchData(match, search, showError).then(function (result) {
+      if (result) {
+        setState({
+          stats: result.issueCounts
+        });
+      }
+    });
+  }, []);
+  react__WEBPACK_IMPORTED_MODULE_0___default.a.useEffect(function () {
+    handleFetchReport();
+  }, [handleFetchReport]);
+
+  if (state.stats == null) {
+    return null;
+  }
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    id: "report"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_IssueFilter_jsx__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    urlBase: "/report"
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Table__WEBPACK_IMPORTED_MODULE_1__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_TableHead__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_TableRow__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_3__["default"], null), STATUSES.map(function (status) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      key: status
+    }, status);
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_TableBody__WEBPACK_IMPORTED_MODULE_2__["default"], null, state.stats.map(function (counts) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_TableRow__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      key: counts.owner
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_3__["default"], null, counts.owner), STATUSES.map(function (status) {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_TableCell__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        key: status
+      }, counts[status]);
+    }));
+  }))));
 }
 
 /***/ }),
@@ -1455,7 +1582,6 @@ function issuesReducer(state, action) {
 }
 
 var IssueRow = function IssueRow(props) {
-  console.log('<IssueRow>', props);
   var issue = props.issue,
       closeIssue = props.closeIssue,
       deleteIssue = props.deleteIssue;
@@ -1780,6 +1906,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _material_ui_icons_Menu__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @material-ui/icons/Menu */ "./node_modules/@material-ui/icons/Menu.js");
 /* harmony import */ var _material_ui_icons_Menu__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_material_ui_icons_Menu__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var _Contents_jsx__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Contents.jsx */ "./src/Contents.jsx");
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -1792,6 +1920,9 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+/* eslint-disable react/jsx-props-no-spreading */
+
+/* eslint-disable react/no-array-index-key */
 
 
 
@@ -1824,16 +1955,30 @@ var useStyles = Object(_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_6__["ma
 });
 
 function NavBar() {
+  var location = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["useLocation"])();
   var classes = useStyles();
+  var tabs = [{
+    label: 'Issue List',
+    to: '/issues'
+  }, {
+    label: 'Report',
+    to: '/report'
+  }, {
+    label: 'About',
+    to: '/about'
+  }];
+  var currentLocationIndex = tabs.findIndex(function (tab) {
+    return tab.to === location.pathname;
+  });
 
-  var _React$useState = react__WEBPACK_IMPORTED_MODULE_0___default.a.useState(0),
+  var _React$useState = react__WEBPACK_IMPORTED_MODULE_0___default.a.useState(currentLocationIndex),
       _React$useState2 = _slicedToArray(_React$useState, 2),
-      value = _React$useState2[0],
-      setValue = _React$useState2[1];
+      tabValue = _React$useState2[0],
+      setTabValue = _React$useState2[1];
 
   var handleChange = function handleChange(event, newValue) {
-    console.log('setValue', newValue);
-    setValue(newValue);
+    console.log('setTabValue', newValue);
+    setTabValue(newValue);
   }; // Only show the "MERN!" chip if the screen is bigger than small breakpoint
 
 
@@ -1865,20 +2010,13 @@ function NavBar() {
     variant: "h6",
     className: classes.title
   }, "Issue Tracker", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(MernChip, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Tabs__WEBPACK_IMPORTED_MODULE_8__["default"], {
-    value: value,
+    value: tabValue,
     onChange: handleChange
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Tab__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    label: "Issue List",
-    component: react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"],
-    to: "/issues"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Tab__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    label: "Report",
-    component: react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"],
-    to: "/report"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Tab__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    label: "About",
-    component: react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"],
-    to: "/about"
+  }, tabs.map(function (tab, index) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Tab__WEBPACK_IMPORTED_MODULE_9__["default"], _extends({}, tab, {
+      component: react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"],
+      key: index
+    }));
   })))));
 }
 

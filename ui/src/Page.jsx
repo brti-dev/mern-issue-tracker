@@ -1,5 +1,7 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -29,12 +31,29 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function NavBar() {
+    const location = useLocation();
     const classes = useStyles();
 
-    const [value, setValue] = React.useState(0);
+    const tabs = [
+        {
+            label: 'Issue List',
+            to: '/issues',
+        },
+        {
+            label: 'Report',
+            to: '/report',
+        },
+        {
+            label: 'About',
+            to: '/about',
+        },
+    ];
+    const currentLocationIndex = tabs.findIndex((tab) => tab.to === location.pathname);
+
+    const [tabValue, setTabValue] = React.useState(currentLocationIndex);
     const handleChange = (event, newValue) => {
-        console.log('setValue', newValue);
-        setValue(newValue);
+        console.log('setTabValue', newValue);
+        setTabValue(newValue);
     };
 
     // Only show the "MERN!" chip if the screen is bigger than small breakpoint
@@ -58,10 +77,8 @@ function NavBar() {
                         Issue Tracker
                         <MernChip />
                     </Typography>
-                    <Tabs value={value} onChange={handleChange}>
-                        <Tab label="Issue List" component={Link} to="/issues" />
-                        <Tab label="Report" component={Link} to="/report" />
-                        <Tab label="About" component={Link} to="/about" />
+                    <Tabs value={tabValue} onChange={handleChange}>
+                        {tabs.map((tab, index) => <Tab {...tab} component={Link} key={index} />)}
                     </Tabs>
                 </Toolbar>
             </AppBar>

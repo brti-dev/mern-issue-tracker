@@ -33,11 +33,11 @@ const useStyles = makeStyles((theme) => ({
  * @param {Object} props Props supplied by React Router via withRouter method
  */
 const IssueFilter = withRouter((props) => {
-    console.log('IssueFilter compontent', props);
+    console.log('<IssueFilter />', props);
 
     const classes = useStyles();
     // Read location qs to determine selectform value
-    const { history, location: { search } } = props;
+    const { history, urlBase, location: { search } } = props;
     const queryParams = new URLSearchParams(search);
 
     const initialState = {
@@ -56,7 +56,7 @@ const IssueFilter = withRouter((props) => {
         if (state.effortMax) newQuery.set('effortMax', state.effortMax);
 
         history.push({
-            pathname: '/issues/',
+            pathname: urlBase,
             search: newQuery.toString(),
         });
     }, [state]);
@@ -97,7 +97,10 @@ const IssueFilter = withRouter((props) => {
 
     return (
         <div className={classes.root}>
-            <Button startIcon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={() => setOpen(!open)}>
+            <Button
+                startIcon={open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                onClick={() => setOpen(!open)}
+            >
                 Filter
             </Button>
             <Collapse in={open}>
