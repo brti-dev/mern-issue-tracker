@@ -845,7 +845,7 @@ function IssueEdit(_ref) {
               dispatchIssue({
                 type: 'INIT'
               });
-              query = "mutation issueUpdate($id: Int!, $changes: IssueUpdateInputs!) {\n            issueUpdate(id: $id, changes: $changes) {\n              id title status owner effort created due description\n            }\n        }"; // Strip of fields that cannot be changed
+              query = "mutation issueUpdate($id: Int!, $changes: IssueUpdateInputs!) {\n            issueUpdate(id: $id, changes: $changes) {\n              id title status owner effort created due description\n            }\n        }"; // Strip off fields that cannot be changed
 
               _issue$data = issue.data, idStripped = _issue$data.id, created = _issue$data.created, changes = _objectWithoutProperties(_issue$data, ["id", "created"]);
               _context.next = 8;
@@ -889,12 +889,11 @@ function IssueEdit(_ref) {
 
   var handleChange = function handleChange(event) {
     var naturalValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    console.log('handleChange', event.target, naturalValue);
     var _event$target = event.target,
         name = _event$target.name,
         textValue = _event$target.value; // String check fixes additional arguments passed by Select component
 
-    var value = naturalValue && typeof naturalValue === 'string' || textValue;
+    var value = naturalValue && typeof naturalValue === 'string' ? naturalValue : textValue;
     dispatchIssue({
       type: 'UPDATE_FIELD',
       name: name,
@@ -935,32 +934,27 @@ function IssueEdit(_ref) {
   }, "Fixed"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_MenuItem__WEBPACK_IMPORTED_MODULE_1__["default"], {
     value: "Closed"
   }, "Closed")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_TextInput_jsx__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    key: id,
     name: "owner",
     value: issue.data.owner,
     label: "Owner",
     onChange: handleChange
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_NumberInput_jsx__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    key: id,
     name: "effort",
     value: issue.data.effort,
     label: "Effort",
     onChange: handleChange
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_DateInput_jsx__WEBPACK_IMPORTED_MODULE_8__["default"], {
-    key: id,
     name: "due",
     value: issue.data.due,
     label: "Due",
     onChange: handleChange,
     onValidityChange: handleValidityChange
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_TextInput_jsx__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    key: id,
     name: "title",
     value: issue.data.title,
     label: "Title",
     onChange: handleChange
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_TextInput_jsx__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    key: id,
     tag: "textarea",
     name: "description",
     value: issue.data.description,
@@ -2094,6 +2088,10 @@ function Page() {
   var currentLocationIndex = tabs.findIndex(function (tab) {
     return tab.to === location.pathname;
   });
+
+  if (currentLocationIndex === -1) {
+    currentLocationIndex = 0;
+  }
 
   var _React$useState = react__WEBPACK_IMPORTED_MODULE_0___default.a.useState(currentLocationIndex),
       _React$useState2 = _slicedToArray(_React$useState, 2),

@@ -16,7 +16,7 @@ function unformat(string) {
 }
 
 export default function DateInput({
-    value,
+    value, // ISODate
     onChange,
     onValidityChange,
     ...fieldProps

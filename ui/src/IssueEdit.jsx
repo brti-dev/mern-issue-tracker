@@ -141,7 +141,7 @@ export default function IssueEdit({ match }) {
             }
         }`;
 
-        // Strip of fields that cannot be changed
+        // Strip off fields that cannot be changed
         const { id: idStripped, created, ...changes } = issue.data;
         const result = await graphQlFetch(query, { changes, id });
         if (result) {
@@ -159,10 +159,9 @@ export default function IssueEdit({ match }) {
      * should take precedence over target.value.
      */
     const handleChange = (event, naturalValue = null) => {
-        console.log('handleChange', event.target, naturalValue);
         const { name, value: textValue } = event.target;
         // String check fixes additional arguments passed by Select component
-        const value = (naturalValue && typeof naturalValue === 'string') || textValue;
+        const value = (naturalValue && typeof naturalValue === 'string') ? naturalValue : textValue;
 
         dispatchIssue({ type: 'UPDATE_FIELD', name, value });
     };
@@ -199,11 +198,11 @@ export default function IssueEdit({ match }) {
                         <MenuItem value="Fixed">Fixed</MenuItem>
                         <MenuItem value="Closed">Closed</MenuItem>
                     </Select>
-                    <TextInput key={id} name="owner" value={issue.data.owner} label="Owner" onChange={handleChange} />
-                    <NumberInput key={id} name="effort" value={issue.data.effort} label="Effort" onChange={handleChange} />
-                    <DateInput key={id} name="due" value={issue.data.due} label="Due" onChange={handleChange} onValidityChange={handleValidityChange} />
-                    <TextInput key={id} name="title" value={issue.data.title} label="Title" onChange={handleChange} />
-                    <TextInput key={id} tag="textarea" name="description" value={issue.data.description} label="Description" onChange={handleChange} />
+                    <TextInput name="owner" value={issue.data.owner} label="Owner" onChange={handleChange} />
+                    <NumberInput name="effort" value={issue.data.effort} label="Effort" onChange={handleChange} />
+                    <DateInput name="due" value={issue.data.due} label="Due" onChange={handleChange} onValidityChange={handleValidityChange} />
+                    <TextInput name="title" value={issue.data.title} label="Title" onChange={handleChange} />
+                    <TextInput tag="textarea" name="description" value={issue.data.description} label="Description" onChange={handleChange} />
                     <Button type="submit" variant="contained" color="primary">
                         Submit
                     </Button>

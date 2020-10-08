@@ -61,7 +61,10 @@ export default function Page() {
     const classes = useStyles();
     const location = useLocation();
 
-    const currentLocationIndex = tabs.findIndex((tab) => tab.to === location.pathname);
+    let currentLocationIndex = tabs.findIndex((tab) => tab.to === location.pathname);
+    if (currentLocationIndex === -1) {
+        currentLocationIndex = 0;
+    }
 
     const [tabValue, setTabValue] = React.useState(currentLocationIndex);
 
