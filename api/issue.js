@@ -23,7 +23,7 @@ const PAGE_SIZE = 10;
 async function list(_, args) {
     // arg `status` passed by qs via React Router (`Contents` component)
     // /#/issues?status=New
-    const { status, effortMin, effortMax, page } = args;
+    const { status, effortMin, effortMax, search, page } = args;
     const filter = {};
     if (status) {
         filter.status = status;
@@ -38,6 +38,10 @@ async function list(_, args) {
         if (effortMax !== undefined) {
             filter.effort.$lte = effortMax;
         }
+    }
+
+    if (search) {
+        filter.$text = { $search: search };
     }
 
     // const issues = await getDb().collection('issues').find(filter).toArray();
