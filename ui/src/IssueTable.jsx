@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-indent-props */
 import Collapse from '@material-ui/core/Collapse';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,11 +15,14 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
 import Tooltip from '@material-ui/core/Tooltip';
+// import Pagination from '@material-ui/lab/Pagination';
+// import PaginationItem from '@material-ui/lab/PaginationItem';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import graphQlFetch from './graphQlFetch.js';
 import IssueAdd from './IssueAdd.jsx';
+import IssuePagination from './IssuePagination.jsx';
 
 const useRowStyles = makeStyles({
     root: {
@@ -43,29 +47,34 @@ const useAddformStyles = makeStyles((theme) => ({
     },
 }));
 
+/**
+ * @param {Object} vars Filters
+ * @returns {Object} Results { issues, pages}
+ */
 async function fetchIssues(vars = {}) {
-    console.log('fetchIssues', vars);
-
     const query = `query issueList(
         $status: StatusType
         $effortMin: Int
         $effortMax: Int
+        $page: Int
     ) {
         issueList(
             status: $status
             effortMin: $effortMin,
             effortMax: $effortMax
+            page: $page
         ) {
             issues {
                 id title status owner created effort due description
             }
+            pages
         }
     }`;
     const result = await graphQlFetch(query, vars);
-    console.log('fetchIssues result:', result);
+    console.log('fetchIssues', vars, result);
 
     if (result) {
-        return result.issueList.issues;
+        return result.issueList;
     }
 
     return {};
@@ -77,7 +86,8 @@ function issuesReducer(state, action) {
             return {
                 ...state,
                 isError: false,
-                data: action.payload,
+                data: action.payload.issues,
+                pages: action.payload.pages,
             };
 
         case 'CLOSE_ISSUE':
@@ -184,7 +194,7 @@ export default function IssueTable({ vars }) {
     const location = useLocation();
     const classes = useAddformStyles();
 
-    const [issues, dispatchIssues] = React.useReducer(issuesReducer, { data: [] });
+    const [issues, dispatchIssues] = React.useReducer(issuesReducer, { data: [], pages: 0 });
     const [openAdd, setOpenAdd] = React.useState(false);
 
     const handleFetchIssues = React.useCallback(() => {
@@ -264,6 +274,7 @@ export default function IssueTable({ vars }) {
                     {issueRows}
                 </TableBody>
             </Table>
+            <IssuePagination page={vars.page} count={issues.pages} />
             <Modal open={openAdd} onClose={() => setOpenAdd(false)}>
                 <div className={classes.paper}>
                     <IssueAdd />

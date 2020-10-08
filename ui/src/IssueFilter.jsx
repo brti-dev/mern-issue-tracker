@@ -8,7 +8,9 @@ import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Box from '@material-ui/core/Box';
-import { makeStyles, Slider, Typography } from '@material-ui/core';
+import Slider from '@material-ui/core/Slider';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -44,6 +46,7 @@ const IssueFilter = withRouter((props) => {
         status: queryParams.get('status') || '',
         effortMin: queryParams.get('effortMin') || '',
         effortMax: queryParams.get('effortMax') || '',
+        page: queryParams.get('page') || 1,
     };
     const [state, setState] = React.useState(initialState);
 
@@ -54,6 +57,7 @@ const IssueFilter = withRouter((props) => {
         if (state.status) newQuery.set('status', state.status);
         if (state.effortMin) newQuery.set('effortMin', state.effortMin);
         if (state.effortMax) newQuery.set('effortMax', state.effortMax);
+        if (state.page) newQuery.set('page', state.page);
 
         history.push({
             pathname: urlBase,

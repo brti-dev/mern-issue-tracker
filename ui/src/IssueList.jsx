@@ -36,6 +36,11 @@ export default function IssueList(props) {
         vars.effortMax = effortMax;
     }
 
+    // Querystring: parse `page`
+    let page = parseInt(queryParams.get('page'), 10);
+    if (Number.isNaN(page)) page = 1;
+    vars.page = page;
+
     /**
      * Route match object
      * Info about how <Route path> matched URL.
