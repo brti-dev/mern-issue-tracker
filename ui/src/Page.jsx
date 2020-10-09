@@ -22,6 +22,7 @@ import ListIcon from '@material-ui/icons/List';
 import ReportIcon from '@material-ui/icons/Assessment';
 import AboutIcon from '@material-ui/icons/Info';
 import Contents from './Contents.jsx';
+import Search from './Search.jsx';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
+    },
+    search: {
+        flexGrow: 1,
+        marginLeft: theme.spacing(2),
     },
     chip: {
         marginLeft: theme.spacing(1),
@@ -83,6 +88,20 @@ export default function Page() {
 
             return '';
         };
+        // Only show the heading if the screen is bigger than small breakpoint
+        const Heading = () => {
+            const theme = useTheme();
+            if (useMediaQuery(theme.breakpoints.up('sm'))) {
+                return (
+                    <Typography variant="h6" className={classes.title}>
+                        Issue Tracker
+                        <MernChip />
+                    </Typography>
+                );
+            }
+
+            return '';
+        };
 
         return (
             <div className={classes.root}>
@@ -91,13 +110,13 @@ export default function Page() {
                         <IconButton edge="start" className={classes.hamburger} color="inherit" aria-label="menu">
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            Issue Tracker
-                        <MernChip />
-                        </Typography>
+                        <Heading />
                         <Tabs value={tabValue} onChange={handleChange}>
                             {tabs.slice(0, 2).map((tab, index) => <Tab label={tab.label} to={tab.to} component={Link} key={index} />)}
                         </Tabs>
+                        <div className={classes.search}>
+                            <Search />
+                        </div>
                     </Toolbar>
                 </AppBar>
             </div>

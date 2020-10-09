@@ -8,8 +8,12 @@ function jsonDateReviver(key, value) {
     return value;
 }
 
-// Common utility function
-// Handles all API calls and reports errors
+/**
+ * Common utility function to handle API calls and report errors.
+ * @param {String} query GraphQL query
+ * @param {Object} variables Variables
+ * @param {Function} showError Callback function to handle errors
+ */
 async function graphQlFetch(query, variables = {}, showError = null) {
     try {
         const response = await fetch(window.ENV.UI_API_ENDPOINT, {
@@ -24,7 +28,9 @@ async function graphQlFetch(query, variables = {}, showError = null) {
             const error = result.errors[0];
             if (error.extensions.code === 'BAD_USER_INPUT') {
                 const details = error.extensions.exception.errors.join('\n ');
-                if (showError) showError(`${error.message}: ${details}`, 'BAD_USER_INPUT');
+                if (showError) {
+                    showError(`${error.message}: ${details}`, 'BAD_USER_INPUT');
+                }
             } else if (showError) {
                 showError(`${error.extensions.code}: ${error.message}`);
             }

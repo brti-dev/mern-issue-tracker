@@ -4,9 +4,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-
 import IssueFilter from './IssueFilter.jsx';
-import graphQlFetch from './graphQlFetch.js';
+import graphQlFetch from './graphql-fetch.js';
 
 const STATUSES = ['New', 'Assigned', 'Fixed', 'Closed'];
 

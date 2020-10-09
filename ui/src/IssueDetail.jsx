@@ -1,6 +1,5 @@
 import React from 'react';
-
-import graphQlFetch from './graphQlFetch.js';
+import graphQlFetch from './graphql-fetch.js';
 
 async function loadData(id) {
     const query = `query issue($id: Int!) {

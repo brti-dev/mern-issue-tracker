@@ -20,7 +20,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import graphQlFetch from './graphQlFetch.js';
+import graphQlFetch from './graphql-fetch.js';
 import IssueAdd from './IssueAdd.jsx';
 import IssuePagination from './IssuePagination.jsx';
 

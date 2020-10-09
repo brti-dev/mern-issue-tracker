@@ -3,8 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
-
-import graphQlFetch from './graphQlFetch.js';
+import graphQlFetch from './graphql-fetch.js';
 
 export default function IssueAdd(props) {
     console.log('<IssueAdd>', props);

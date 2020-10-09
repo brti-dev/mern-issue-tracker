@@ -10,7 +10,7 @@ import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
-import graphQlFetch from './graphQlFetch.js';
+import graphQlFetch from './graphql-fetch.js';
 import NumberInput from './NumberInput.jsx';
 import DateInput from './DateInput.jsx';
 import TextInput from './TextInput.jsx';
