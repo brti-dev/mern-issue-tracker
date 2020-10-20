@@ -11,7 +11,7 @@ async function connectToDb() {
     );
 
     await client.connect();
-    console.log('Connected to MongoDB via ', url.substring(0, 15), '...');
+    console.log('Connected to MongoDB via ', url.substring(0, 20), '...');
     db = client.db();
     // const test_db_schema = await db.collection('issues').find({}).toArray();
     // console.log(test_db_schema);
